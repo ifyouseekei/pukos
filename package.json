@@ -4,8 +4,11 @@
   "description": "Timer app for productivity.",
   "main": "index.js",
   "scripts": {
+    "clean": "rimraf js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "http-server ."
+    "start": "http-server .",
+    "build": "tsc",
+    "dev": "rimraf js && tsc-watch --onSuccess 'npm start'"
   },
   "keywords": [
     "timer"
@@ -14,5 +17,12 @@
   "license": "ISC",
   "dependencies": {
     "http-server": "^14.1.1"
-  }
+  },
+  "devDependencies": {
+    "eslint": "^9.20.1",
+    "rimraf": "^6.0.1",
+    "tsc-watch": "^6.2.1",
+    "typescript": "^5.7.3"
+  },
+  "type": "module"
 }
