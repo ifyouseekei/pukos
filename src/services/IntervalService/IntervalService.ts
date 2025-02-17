@@ -6,16 +6,16 @@ const INTERVALS_ENUM: Record<
   { focusTime: number; breakTime: number }
 > = {
   '25:5': {
-    focusTime: 25,
-    breakTime: 5,
+    focusTime: 25 * 60,
+    breakTime: 5 * 60,
   },
   '50:10': {
-    focusTime: 50,
-    breakTime: 10,
+    focusTime: 50 * 60,
+    breakTime: 10 * 60,
   },
   '90:30': {
-    focusTime: 90,
-    breakTime: 30,
+    focusTime: 90 * 60,
+    breakTime: 30 * 60,
   },
 };
 

@@ -1,4 +1,4 @@
-import { Observable } from '../../utils/Observable';
+import { Observable } from '../../utils/Observable.js';
 
 /**
  * This class controls audio related functions

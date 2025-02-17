@@ -1,5 +1,5 @@
 import { Observable } from '../../utils/Observable.js';
-import TickWorker from '../../utils/TickWorker.js';
+import { TICK_IDS, TickWorker } from '../../utils/TickWorker.js';
 import AudioService from '../AudioService/AudioService.js';
 import IntervalService from '../IntervalService/IntervalService.js';
 import { PomodoroStates } from './Pomodoro.types.js';
@@ -104,7 +104,7 @@ class PomodoroService {
     }
 
     worker.addEventListener('message', (event) => {
-      if (event.data === TickWorker.TICK_ID && this.isTimerRunning) {
+      if (event.data === TICK_IDS.id && this.isTimerRunning) {
         const remainingTime = this.remainingTime.getValue();
         this.remainingTime.setValue(remainingTime - 1);
 

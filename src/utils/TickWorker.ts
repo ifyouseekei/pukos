@@ -1,3 +1,8 @@
+export const TICK_IDS = {
+  start: 'start',
+  stop: 'stop',
+  id: 'tick',
+};
 /**
  * TickWorker manages a web worker for ticking every second.
  * Used in the Pomodoro timer to keep track of time in the background.
@@ -8,11 +13,8 @@
  * - Stops ticking when the timer is paused or the session ends.
  * - Terminates when the user **exits the Pomodoro session**.
  */
-class TickWorker {
+export class TickWorker {
   worker: Worker | null = null;
-  static START_TICK = 'start';
-  static STOP_TICK = 'stop';
-  static TICK_ID = 'tick';
 
   constructor() {
     this.createWorker();
@@ -26,13 +28,13 @@ class TickWorker {
       let intervalId: NodeJS.Timeout;
       self.addEventListener('message', ({ data }) => {
         const { action } = data;
-        if (action === TickWorker.START_TICK) {
+        if (action === 'start') {
           clearInterval(intervalId);
           const oneSecondMs = 1000;
           intervalId = setInterval(() => {
-            self.postMessage(TickWorker.TICK_ID);
+            self.postMessage('tick');
           }, oneSecondMs);
-        } else if (action === TickWorker.STOP_TICK) {
+        } else if (action === 'stop') {
           clearInterval(intervalId);
         }
       });
@@ -50,14 +52,14 @@ class TickWorker {
    * Starts the ticking process, usually when a Pomodoro session begins.
    */
   start(): void {
-    this.worker?.postMessage({ action: TickWorker.START_TICK });
+    this.worker?.postMessage({ action: TICK_IDS.start });
   }
 
   /**
    * Stops the ticking process, usually when the timer is paused or session ends.
    */
   stop(): void {
-    this.worker?.postMessage({ action: TickWorker.STOP_TICK });
+    this.worker?.postMessage({ action: TICK_IDS.stop });
   }
 
   /**
@@ -69,5 +71,3 @@ class TickWorker {
     this.worker = null;
   }
 }
-
-export default TickWorker;
