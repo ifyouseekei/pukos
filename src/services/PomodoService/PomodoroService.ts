@@ -139,10 +139,16 @@ class PomodoroService {
     this.isTimerRunning = false;
     this.tickWorker.stop();
 
+    // Timer ended whilst on "focus" mode
     if (this.state.getValue() === 'focus') {
       this.state.setValue('pre-break');
       this.remainingTime.setValue(IntervalService.breakTime);
-    } else if (this.state.getValue() === 'break') {
+
+      return;
+    }
+
+    // Timer ended whilst on "break" mode
+    if (this.state.getValue() === 'break') {
       this.state.setValue('pre-focus');
       this.remainingTime.setValue(IntervalService.focusTime);
     }
