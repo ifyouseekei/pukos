@@ -1,7 +1,8 @@
 import { Observable } from '../../utils/Observable.js';
 
+const LOCAL_STORAGE_KEY = 'pomodoroInterval';
 export type Intervals = '25:5' | '50:10' | '90:30';
-export const INTERVALS_ENUM: Record<
+const INTERVALS_ENUM: Record<
   Intervals,
   { focusTime: number; breakTime: number }
 > = {
@@ -18,6 +19,7 @@ export const INTERVALS_ENUM: Record<
     breakTime: 30 * 60,
   },
 };
+const intervals = Object.keys(INTERVALS_ENUM);
 
 class IntervalService {
   private static instance: IntervalService | null = null;
@@ -29,6 +31,8 @@ class IntervalService {
         'Cannot create multiple instances of a Singleton. Use getInstance() instead.'
       );
     }
+
+    this.loadIntervalFromStorage();
   }
 
   public get focusTime(): number {
@@ -40,7 +44,23 @@ class IntervalService {
   }
 
   public setInterval(interval: Intervals) {
-    this.interval.setValue(interval);
+    if (this.isIntervalValid(interval)) {
+      this.interval.setValue(interval);
+      this.saveIntervalToStorage(interval);
+    }
+  }
+
+  // Load the saved interval from localStorage (if any)
+  private loadIntervalFromStorage(): void {
+    const savedInterval = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (savedInterval && this.isIntervalValid(savedInterval)) {
+      this.interval.setValue(savedInterval as Intervals);
+    }
+  }
+
+  // Save the current interval to localStorage
+  private saveIntervalToStorage(interval: Intervals): void {
+    localStorage.setItem(LOCAL_STORAGE_KEY, interval);
   }
 
   public static getInstance(): IntervalService {
@@ -49,6 +69,14 @@ class IntervalService {
     }
 
     return this.instance;
+  }
+
+  public isIntervalValid(value?: unknown): value is Intervals {
+    if (typeof value !== 'string') {
+      return false;
+    }
+
+    return intervals.includes(value as Intervals);
   }
 }
 
