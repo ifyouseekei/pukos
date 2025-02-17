@@ -10,9 +10,9 @@
  */
 class TickWorker {
   worker: Worker | null = null;
-  START_TICK = 'start';
-  STOP_TICK = 'stop';
-  TICK_ID = 'tick';
+  static START_TICK = 'start';
+  static STOP_TICK = 'stop';
+  static TICK_ID = 'tick';
 
   constructor() {
     this.createWorker();
@@ -26,13 +26,13 @@ class TickWorker {
       let intervalId: NodeJS.Timeout;
       self.addEventListener('message', ({ data }) => {
         const { action } = data;
-        if (action === this.START_TICK) {
+        if (action === TickWorker.START_TICK) {
           clearInterval(intervalId);
           const oneSecondMs = 1000;
           intervalId = setInterval(() => {
-            self.postMessage(this.TICK_ID);
+            self.postMessage(TickWorker.TICK_ID);
           }, oneSecondMs);
-        } else if (action === this.STOP_TICK) {
+        } else if (action === TickWorker.STOP_TICK) {
           clearInterval(intervalId);
         }
       });
@@ -50,14 +50,14 @@ class TickWorker {
    * Starts the ticking process, usually when a Pomodoro session begins.
    */
   start(): void {
-    this.worker?.postMessage({ action: this.START_TICK });
+    this.worker?.postMessage({ action: TickWorker.START_TICK });
   }
 
   /**
    * Stops the ticking process, usually when the timer is paused or session ends.
    */
   stop(): void {
-    this.worker?.postMessage({ action: this.STOP_TICK });
+    this.worker?.postMessage({ action: TickWorker.STOP_TICK });
   }
 
   /**
