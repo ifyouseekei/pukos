@@ -114,20 +114,33 @@ class PomodoroService {
 
     worker.addEventListener('message', (event) => {
       if (event.data === TICK_IDS.id && this.isTimerRunning) {
-        const remainingTime = this.remainingTime.getValue();
-        this.remainingTime.setValue(remainingTime - 1);
+        this.countDown();
 
-        this.totalTime.setValue(this.totalTime.getValue() + 1);
+        this.countUpTotalTime();
 
-        if (this.state.getValue() === 'focus') {
-          this.focusTime.setValue(this.focusTime.getValue() + 1);
-        }
+        this.countUpFocusTime();
 
-        if (remainingTime <= 1) {
+        // Countdown timer reaches 0
+        if (this.remainingTime.getValue() <= 1) {
           this.onTimerFinished();
         }
       }
     });
+  }
+
+  private countDown(): void {
+    this.remainingTime.setValue(this.remainingTime.getValue() - 1);
+  }
+
+  private countUpTotalTime(): void {
+    this.totalTime.setValue(this.totalTime.getValue() + 1);
+  }
+
+  private countUpFocusTime(): void {
+    // Only increase the focus time whilst in "focus" mode
+    if (this.state.getValue() === 'focus') {
+      this.focusTime.setValue(this.focusTime.getValue() + 1);
+    }
   }
 
   /**
