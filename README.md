@@ -3,6 +3,7 @@
 
 ## Folder Structure
 
+```
 │/src
 │── /components (Things with elements)
 │   ├── MainControlButtons.ts
@@ -14,3 +15,4 @@
 │── /utils
 │   ├── Observable.ts
 │── index.ts
+```
