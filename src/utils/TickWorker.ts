@@ -9,7 +9,7 @@
  * - Terminates when the user **exits the Pomodoro session**.
  */
 class TickWorker {
-  private worker: Worker | null = null;
+  worker: Worker | null = null;
   START_TICK = 'start';
   STOP_TICK = 'stop';
   TICK_ID = 'tick';
