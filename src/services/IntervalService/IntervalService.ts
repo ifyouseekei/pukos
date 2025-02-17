@@ -1,7 +1,7 @@
 import { Observable } from '../../utils/Observable.js';
 
 export type Intervals = '25:5' | '50:10' | '90:30';
-const INTERVALS_ENUM: Record<
+export const INTERVALS_ENUM: Record<
   Intervals,
   { focusTime: number; breakTime: number }
 > = {

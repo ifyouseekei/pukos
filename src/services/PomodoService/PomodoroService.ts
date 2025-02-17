@@ -44,6 +44,9 @@ class PomodoroService {
    * Resets the pomodoro state to the initial state
    */
   public onReset(): void {
+    if (AudioService.isPlayingAlarm.getValue()) {
+      AudioService.stopAlarm();
+    }
     this.isTimerRunning = false;
     this.remainingTime.setValue(IntervalService.focusTime);
     this.state.setValue('pre-focus');
@@ -68,6 +71,9 @@ class PomodoroService {
    * Starts the "Focus" mode
    */
   public onFocus(): void {
+    if (AudioService.isPlayingAlarm.getValue()) {
+      AudioService.stopAlarm();
+    }
     this.isTimerRunning = true;
     this.tickWorker.start();
     this.remainingTime.setValue(IntervalService.focusTime);
@@ -78,6 +84,9 @@ class PomodoroService {
    * Starts the "Break" mode
    */
   public onBreak(): void {
+    if (AudioService.isPlayingAlarm.getValue()) {
+      AudioService.stopAlarm();
+    }
     this.isTimerRunning = true;
     this.tickWorker.start();
     this.remainingTime.setValue(IntervalService.breakTime);
@@ -114,7 +123,7 @@ class PomodoroService {
           this.focusTime.setValue(this.focusTime.getValue() + 1);
         }
 
-        if (remainingTime <= 0) {
+        if (remainingTime <= 1) {
           this.onTimerFinished();
         }
       }
@@ -126,11 +135,16 @@ class PomodoroService {
    */
   private onTimerFinished(): void {
     AudioService.playAlarm();
+    // TODO: Autoplay and idle should modify things here
+    this.isTimerRunning = false;
+    this.tickWorker.stop();
 
     if (this.state.getValue() === 'focus') {
       this.state.setValue('pre-break');
+      this.remainingTime.setValue(IntervalService.breakTime);
     } else if (this.state.getValue() === 'break') {
       this.state.setValue('pre-focus');
+      this.remainingTime.setValue(IntervalService.focusTime);
     }
   }
 

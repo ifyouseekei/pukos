@@ -18,6 +18,7 @@ class AudioService {
     this.alarmAudio = document.getElementById(
       'pomodoroAlertAudio'
     ) as HTMLAudioElement | null;
+    this.init();
   }
 
   public static getInstance(): AudioService {
