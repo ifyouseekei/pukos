@@ -5,6 +5,11 @@
  * @returns A formatted string representing the time in "mm:ss" format.
  */
 export function secondsToTimeString(seconds: number): string {
+  // If seconds is invalid (non-numeric or negative), return a fallback value
+  if (typeof seconds !== 'number' || isNaN(seconds) || seconds < 0) {
+    return '--:--';
+  }
+
   const minutes = Math.floor(seconds / 60); // Calculate full minutes
   const remainingSeconds = seconds % 60; // Remaining seconds
 

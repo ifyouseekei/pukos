@@ -6,6 +6,8 @@
   "scripts": {
     "clean": "rimraf dist",
     "test": "jest",
+    "test:watch": "jest --watch",
+    "test:ci": "jest --ci",
     "start": "http-server .",
     "build": "tsc",
     "dev": "rimraf dist && tsc-watch --onSuccess 'npm start'"
