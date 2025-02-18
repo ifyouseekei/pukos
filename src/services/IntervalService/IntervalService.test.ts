@@ -34,6 +34,10 @@ describe('IntervalService', () => {
       instance.setInterval('50:10');
       expect(instance.interval.getValue()).toBe('50:10');
       expect(localStorage.getItem(LOCAL_STORAGE_KEY)).toBe('50:10');
+
+      instance.setInterval('90:30');
+      expect(instance.interval.getValue()).toBe('90:30');
+      expect(localStorage.getItem(LOCAL_STORAGE_KEY)).toBe('90:30');
     });
   });
 });
