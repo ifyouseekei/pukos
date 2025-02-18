@@ -71,9 +71,7 @@ class PomodoroService {
    * Starts the "Focus" mode
    */
   public onFocus(): void {
-    if (AudioService.isPlayingAlarm.getValue()) {
-      AudioService.stopAlarm();
-    }
+    AudioService.stopAlarm();
     this.isTimerRunning = true;
     this.tickWorker.start();
     this.remainingTime.setValue(IntervalService.focusTime);
@@ -84,9 +82,7 @@ class PomodoroService {
    * Starts the "Break" mode
    */
   public onBreak(): void {
-    if (AudioService.isPlayingAlarm.getValue()) {
-      AudioService.stopAlarm();
-    }
+    AudioService.stopAlarm();
     this.isTimerRunning = true;
     this.tickWorker.start();
     this.remainingTime.setValue(IntervalService.breakTime);

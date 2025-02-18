@@ -68,6 +68,11 @@ class AudioService {
       return;
     }
 
+    // No need to stop if its not playing
+    if (this.isPlayingAlarm.getValue() === false) {
+      return;
+    }
+
     this.isPlayingAlarm.setValue(false);
     this.alarmAudio.currentTime = 0;
     this.alarmAudio.pause();
