@@ -1,6 +1,6 @@
 import { Observable } from '../../utils/Observable.js';
 import { TICK_IDS, TickWorker } from '../../utils/TickWorker.js';
-import AudioService from '../AudioService/AudioService.js';
+import AudioService from '../AudioService/index.js';
 import IntervalService from '../IntervalService/index.js';
 import { PomodoroStates } from './Pomodoro.types.js';
 

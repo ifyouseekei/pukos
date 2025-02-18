@@ -19,6 +19,7 @@ class AudioService {
       'pomodoroAlertAudio'
     ) as HTMLAudioElement | null;
     this.init();
+    this.cleanup();
   }
 
   public static getInstance(): AudioService {
@@ -68,14 +69,15 @@ class AudioService {
       return;
     }
 
-    // No need to stop if its not playing
-    if (this.isPlayingAlarm.getValue() === false) {
-      return;
-    }
-
     this.isPlayingAlarm.setValue(false);
     this.alarmAudio.currentTime = 0;
     this.alarmAudio.pause();
+  }
+
+  private cleanup(): void {
+    window.addEventListener('beforeunload', () => {
+      this.stopAlarm();
+    });
   }
 }
 

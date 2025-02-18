@@ -24,6 +24,7 @@ class HomePage {
     this.initButtons();
     this.initIntervals();
     this.initCountdownTimer();
+    this.initTitleChange();
   }
 
   private initButtons(): void {
@@ -68,14 +69,39 @@ class HomePage {
   }
 
   private initCountdownTimer(): void {
-    // Set the initial value
-    this.countdownTimerEl.textContent = secondsToTimeString(
-      PomodoroService.remainingTime.getValue()
-    );
-
-    // Listen to changes on remaining time to reflex to the countdownTimer
-    PomodoroService.remainingTime.subscribe((remainingTime) => {
+    const updateCountdownContent = (remainingTime: number) => {
       this.countdownTimerEl.textContent = secondsToTimeString(remainingTime);
+    };
+
+    // Set the initial value
+    updateCountdownContent(PomodoroService.remainingTime.getValue());
+
+    // Listen to changes on remaining time to reflect to the countdownTimer
+    PomodoroService.remainingTime.subscribe(updateCountdownContent);
+
+    // Cleanup
+    window.addEventListener('beforeunload', () => {
+      PomodoroService.remainingTime.unsubscribe(updateCountdownContent);
+    });
+  }
+
+  private initTitleChange(): void {
+    function modifyTitle(remainingTime: number) {
+      if (PomodoroService.state.getValue() === 'focus') {
+        document.title = `${secondsToTimeString(remainingTime)} - Focus`;
+        return;
+      }
+
+      if (PomodoroService.state.getValue() === 'break') {
+        document.title = `${secondsToTimeString(remainingTime)} - Break`;
+        return;
+      }
+    }
+
+    PomodoroService.remainingTime.subscribe(modifyTitle);
+    // Cleanup
+    window.addEventListener('beforeunload', () => {
+      PomodoroService.remainingTime.unsubscribe(modifyTitle);
     });
   }
 
