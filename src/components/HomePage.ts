@@ -1,4 +1,4 @@
-import IntervalService from '../services/IntervalService/IntervalService.js';
+import IntervalService from '../services/IntervalService/index.js';
 import PomodoroService from '../services/PomodoService/PomodoroService.js';
 import { getOrThrowElement } from '../utils/getOrThrowElement.js';
 import { secondsToTimeString } from '../utils/secondsToTimeString.js';

@@ -1,6 +1,6 @@
 import { Observable } from '../../utils/Observable.js';
 
-const LOCAL_STORAGE_KEY = 'pomodoroInterval';
+export const LOCAL_STORAGE_KEY = 'pomodoroInterval';
 export type Intervals = '25:5' | '50:10' | '90:30';
 const INTERVALS_ENUM: Record<
   Intervals,
@@ -21,9 +21,9 @@ const INTERVALS_ENUM: Record<
 };
 const intervals = Object.keys(INTERVALS_ENUM);
 
-class IntervalService {
+export class IntervalService {
   private static instance: IntervalService | null = null;
-  public interval = new Observable<Intervals>('25:5');
+  public interval: Observable<Intervals>;
 
   private constructor() {
     if (IntervalService.instance) {
@@ -32,7 +32,12 @@ class IntervalService {
       );
     }
 
-    this.loadIntervalFromStorage();
+    const savedInterval = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (savedInterval && this.isIntervalValid(savedInterval)) {
+      this.interval = new Observable<Intervals>(savedInterval as Intervals);
+    } else {
+      this.interval = new Observable<Intervals>('25:5');
+    }
   }
 
   public get focusTime(): number {
@@ -47,14 +52,6 @@ class IntervalService {
     if (this.isIntervalValid(interval)) {
       this.interval.setValue(interval);
       this.saveIntervalToStorage(interval);
-    }
-  }
-
-  // Load the saved interval from localStorage (if any)
-  private loadIntervalFromStorage(): void {
-    const savedInterval = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (savedInterval && this.isIntervalValid(savedInterval)) {
-      this.interval.setValue(savedInterval as Intervals);
     }
   }
 

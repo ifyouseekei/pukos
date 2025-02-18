@@ -4,11 +4,11 @@
   "description": "Timer app for productivity.",
   "main": "index.js",
   "scripts": {
-    "clean": "rimraf js",
+    "clean": "rimraf dist",
     "test": "jest",
     "start": "http-server .",
     "build": "tsc",
-    "dev": "rimraf js && tsc-watch --onSuccess 'npm start'"
+    "dev": "rimraf dist && tsc-watch --onSuccess 'npm start'"
   },
   "keywords": [
     "timer"
