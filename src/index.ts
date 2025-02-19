@@ -9,7 +9,7 @@ function onDOMContentLoaded() {
     console.log('a new value!', newValue);
   });
 
-  IdleCheckerService.isIdle.setValue(true)
+  IdleCheckerService.isIdle.getValue()
   IdleCheckerService.init()
 }
 
