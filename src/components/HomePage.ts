@@ -1,3 +1,4 @@
+import IdleCheckerService from '../services/IdleCheckerService.js';
 import IntervalService from '../services/IntervalService/index.js';
 import PomodoroService from '../services/PomodoService/PomodoroService.js';
 import { getOrThrowElement } from '../utils/getOrThrowElement.js';
@@ -28,17 +29,19 @@ class HomePage {
   }
 
   private initButtons(): void {
-    this.focusButtonEl.addEventListener('click', () =>
-      PomodoroService.onFocus()
-    );
+    this.focusButtonEl.addEventListener('click', () => {
+      IdleCheckerService.init();
+      PomodoroService.onFocus();
+    });
 
-    this.takeABreakButtonEl.addEventListener('click', () =>
-      PomodoroService.onBreak()
-    );
+    this.takeABreakButtonEl.addEventListener('click', () => {
+      PomodoroService.onBreak();
+    });
 
-    this.endSessionButtonEl.addEventListener('click', () =>
-      PomodoroService.onReset()
-    );
+    this.endSessionButtonEl.addEventListener('click', () => {
+      IdleCheckerService.stop();
+      PomodoroService.onReset();
+    });
   }
 
   private initIntervals(): void {
