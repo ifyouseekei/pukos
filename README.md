@@ -12,6 +12,7 @@
 │   ├── PomodoroStateService.ts
 │   ├── TimerService.ts
 │   ├── AudioManagerService.ts
+│   ├── IdleCheckerService.ts
 │── /utils
 │   ├── Observable.ts
 │── index.ts
