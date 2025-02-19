@@ -1,15 +1,16 @@
 import HomePage from './components/HomePage.js';
-import IdleChecker from './utils/IdleChecker.js';
+import IdleCheckerService from './services/IdleCheckerService.js';
 
 function onDOMContentLoaded() {
   HomePage.init();
 
-  console.log('isIdle default value', IdleChecker.isIdle.getValue());
-  IdleChecker.isIdle.subscribe((newValue) => {
+  console.log('isIdle default value', IdleCheckerService.isIdle.getValue());
+  IdleCheckerService.isIdle.subscribe((newValue) => {
     console.log('a new value!', newValue);
   });
 
-  IdleChecker.isIdle.setValue(true)
+  IdleCheckerService.isIdle.setValue(true)
+  IdleCheckerService.init()
 }
 
 document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
