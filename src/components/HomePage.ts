@@ -2,19 +2,25 @@ import IdleCheckerService from '../services/IdleCheckerService.js';
 import IntervalService from '../services/IntervalService/index.js';
 import PomodoroService from '../services/PomodoService/PomodoroService.js';
 import { getOrThrowElement } from '../utils/getOrThrowElement.js';
-import { secondsToTimeString } from '../utils/secondsToTimeString.js';
+import {
+  secondsToFormattedTime,
+  secondsToMinuteString,
+} from '../utils/timeFormatter.utils.js';
 
 class HomePage {
   private static instance: HomePage | null = null;
 
-  public countdownTimerEl: HTMLParagraphElement;
+  public countdownTimerEl: HTMLSpanElement;
+  public totalFocusTimeEl: HTMLSpanElement;
   public focusButtonEl: HTMLButtonElement;
   public takeABreakButtonEl: HTMLButtonElement;
   public endSessionButtonEl: HTMLButtonElement;
   public intervalEls: NodeListOf<HTMLInputElement>;
+  public cleanupCallbacks: Array<() => void> = [];
 
   private constructor() {
     this.countdownTimerEl = getOrThrowElement('#countdown-timer');
+    this.totalFocusTimeEl = getOrThrowElement('#total-focus-time');
     this.focusButtonEl = getOrThrowElement('#focus-button');
     this.takeABreakButtonEl = getOrThrowElement('#take-a-break-button');
     this.endSessionButtonEl = getOrThrowElement('#end-session-button');
@@ -25,6 +31,7 @@ class HomePage {
     this.initButtons();
     this.initIntervals();
     this.initCountdownTimer();
+    this.initTotalFocusTime();
     this.initTitleChange();
   }
 
@@ -73,7 +80,7 @@ class HomePage {
 
   private initCountdownTimer(): void {
     const updateCountdownContent = (remainingTime: number) => {
-      this.countdownTimerEl.textContent = secondsToTimeString(remainingTime);
+      this.countdownTimerEl.textContent = secondsToMinuteString(remainingTime);
     };
 
     // Set the initial value
@@ -83,29 +90,51 @@ class HomePage {
     PomodoroService.remainingTime.subscribe(updateCountdownContent);
 
     // Cleanup
-    window.addEventListener('beforeunload', () => {
+    this.cleanupCallbacks.push(() => {
       PomodoroService.remainingTime.unsubscribe(updateCountdownContent);
+    });
+  }
+
+  private initTotalFocusTime(): void {
+    const updateTotalFocusTimeContent = (focusTime: number) => {
+      this.totalFocusTimeEl.textContent = secondsToFormattedTime(focusTime);
+    };
+
+    // Set the initial value
+    updateTotalFocusTimeContent(PomodoroService.focusTime.getValue());
+
+    // Listen to changes
+    PomodoroService.focusTime.subscribe(updateTotalFocusTimeContent);
+
+    // Cleanup
+    this.cleanupCallbacks.push(() => {
+      PomodoroService.remainingTime.unsubscribe(updateTotalFocusTimeContent);
     });
   }
 
   private initTitleChange(): void {
     function modifyTitle(remainingTime: number) {
       if (PomodoroService.state.getValue() === 'focus') {
-        document.title = `${secondsToTimeString(remainingTime)} - Focus`;
+        document.title = `${secondsToMinuteString(remainingTime)} - Focus`;
         return;
       }
 
       if (PomodoroService.state.getValue() === 'break') {
-        document.title = `${secondsToTimeString(remainingTime)} - Break`;
+        document.title = `${secondsToMinuteString(remainingTime)} - Break`;
         return;
       }
     }
 
     PomodoroService.remainingTime.subscribe(modifyTitle);
+
     // Cleanup
-    window.addEventListener('beforeunload', () => {
+    this.cleanupCallbacks.push(() => {
       PomodoroService.remainingTime.unsubscribe(modifyTitle);
     });
+  }
+
+  cleanup(): void {
+    this.cleanupCallbacks.forEach((cb) => cb());
   }
 
   public static getInstance(): HomePage {
@@ -116,5 +145,7 @@ class HomePage {
     return this.instance;
   }
 }
+
+window.addEventListener('unload', HomePage.getInstance().cleanup);
 
 export default HomePage.getInstance();
