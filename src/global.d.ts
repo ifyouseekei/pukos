@@ -8,3 +8,5 @@ declare class IdleDetector {
     listener: (this: IdleDetector, ev: Event) => any
   ): void;
 }
+
+type AppResponseType<T extends unknown> = [T, null] | [null, Error];
