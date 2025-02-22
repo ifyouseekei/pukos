@@ -131,3 +131,71 @@ describe('TESTING TodoDB.getList', () => {
     });
   });
 });
+
+describe('TESTING TodoDB.deleteById', () => {
+  const todoToAdd = {
+    id: '1',
+    title: 'Incomplete Todo',
+    description: 'Test Description',
+    isCompleted: false,
+    createdAt: new Date(),
+  } satisfies Todo;
+
+  test('deleteById', async () => {
+    const todoDB = TodoDB.getInstance();
+    const [, addIncompletError] = await todoDB.add(todoToAdd);
+    expect(addIncompletError).toBeNull();
+
+    // Should display todo
+    const [allResult, allError] = await todoDB.getList({});
+    expect(allError).toBeNull();
+    expect(allResult).toStrictEqual([todoToAdd]);
+
+    const deleteError = await todoDB.deleteById(todoToAdd.id);
+    expect(deleteError).toBeNull();
+
+    // Should not display anything
+    const [listResult2] = await todoDB.getList({});
+    expect(listResult2).toStrictEqual([]);
+  });
+});
+
+describe('TESTING TodoDB.updateById', () => {
+  const todoToAdd = {
+    id: '1',
+    title: 'Incomplete Todo',
+    description: 'Test Description',
+    isCompleted: false,
+    createdAt: new Date(),
+  } satisfies Todo;
+  const todoToAdd2 = {
+    id: '2',
+    title: 'Second todo',
+    description: 'Test Description',
+    isCompleted: false,
+    createdAt: new Date(),
+  } satisfies Todo;
+
+  test('updateById', async () => {
+    const todoDB = TodoDB.getInstance();
+    await todoDB.add(todoToAdd);
+    await todoDB.add(todoToAdd2);
+
+    // Should display todo
+    const [allResult, allError] = await todoDB.getList({});
+    expect(allError).toBeNull();
+    expect(allResult).toStrictEqual([todoToAdd, todoToAdd2]);
+
+    const updatedTodo = {
+      ...todoToAdd,
+      description: 'New description',
+    } satisfies Todo;
+
+    const [, error] = await todoDB.update(updatedTodo);
+    expect(error).toBeNull();
+
+    // Should only update one
+    const [listResult2] = await todoDB.getList({});
+    expect(listResult2).toStrictEqual([updatedTodo, todoToAdd2]);
+  });
+});

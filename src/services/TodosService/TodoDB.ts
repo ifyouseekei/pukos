@@ -63,17 +63,13 @@ class TodoDB {
         return resolve([null, error]);
       }
 
-      const request = objectStore.put(toDatabase(todo));
+      const request = objectStore.add(toDatabase(todo));
       request.onsuccess = () => resolve([todo, null]);
       request.onerror = () => resolve([null, new Error('failed to save todo')]);
     });
   }
 
-  /**
-   * Delete a Todo by its key
-   * @param key The key value of IndexedDB
-   */
-  public deleteByKey(key: number): Promise<Error | null> {
+  public deleteById(id: Todo['id']): Promise<Error | null> {
     return new Promise((resolve) => {
       if (!this.databaseService) {
         return resolve(new Error('no database found'));
@@ -88,9 +84,30 @@ class TodoDB {
         return resolve(error);
       }
 
-      const request = objectStore.delete(key);
+      const request = objectStore.delete(id);
       request.onsuccess = () => resolve(null);
       request.onerror = () => resolve(new Error('failed to save todo'));
+    });
+  }
+
+  public update(todo: Todo): Promise<AppResponseType<Todo>> {
+    return new Promise((resolve) => {
+      if (!this.databaseService) {
+        return resolve([null, new Error('no database found')]);
+      }
+
+      const [objectStore, error] = this.databaseService.getObjectStore(
+        TodoDB.storeName,
+        'readwrite'
+      );
+
+      if (error) {
+        return resolve([null, error]);
+      }
+
+      const request = objectStore.put(toDatabase(todo));
+      request.onsuccess = () => resolve([todo, null]);
+      request.onerror = () => resolve([null, new Error('failed to save todo')]);
     });
   }
 
