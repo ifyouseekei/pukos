@@ -1,31 +1,87 @@
 class DatabaseService {
+  private static instance: DatabaseService;
   public db: IDBDatabase | null = null;
+  public readonly dbName: string = 'AppDatabase'; // Fixed DB name
+  public readonly version: number = 1; // Database version
 
-  constructor() {} // Prevent direct instantiation
+  private constructor() {} // Private constructor to enforce singleton
 
-  public connect(dbName: string): Promise<AppResponseType<IDBDatabase>> {
-    // Return same instance if its already connected
-    if (this.db) {
-      return Promise.resolve([this.db, null]);
+  public static getInstance(): DatabaseService {
+    if (!DatabaseService.instance) {
+      DatabaseService.instance = new DatabaseService();
     }
+    return DatabaseService.instance;
+  }
 
-    // Let us open version 4 of our database
-    const DBOpenRequest = window.indexedDB.open(dbName, 1);
-
+  public connect(
+    createStores: (db: IDBDatabase) => void
+  ): Promise<AppResponseType<IDBDatabase>> {
     return new Promise((resolve) => {
-      // these two event handlers act on the database being opened successfully, or not
+      const DBOpenRequest = window.indexedDB.open(this.dbName, this.version);
+
       DBOpenRequest.onerror = (event) => {
         console.error(event);
-        resolve([null, new Error('unable to connect to the database')]);
+        resolve([null, new Error('Unable to connect to the database')]);
       };
 
-      DBOpenRequest.onsuccess = () => {
-        // store the result of opening the database in the db variable. This is used a lot later on, for opening transactions and suchlike.
-        this.db = DBOpenRequest.result;
+      DBOpenRequest.onupgradeneeded = (event) => {
+        const db = (event.target as IDBOpenDBRequest).result;
+        this.db = db;
 
-        resolve([DBOpenRequest.result, null]);
+        createStores(db);
+      };
+
+      DBOpenRequest.onsuccess = (event) => {
+        const db = (event.target as IDBOpenDBRequest).result;
+        if (!db) {
+          return resolve([null, new Error('db was not initialized')]);
+        }
+
+        resolve([db, null]);
       };
     });
+  }
+
+  public transaction(
+    storeName: string | string[],
+    mode: IDBTransactionMode = 'readonly',
+    options?: IDBTransactionOptions
+  ): AppResponseType<IDBTransaction> {
+    if (!this.db) {
+      return [null, new Error('Database not initialized')];
+    }
+
+    try {
+      const transaction = this.db.transaction(storeName, mode, options);
+      return [transaction, null];
+    } catch (err) {
+      return [
+        null,
+        err instanceof Error ? err : new Error('Transaction failed'),
+      ];
+    }
+  }
+
+  public getObjectStore(
+    storeName: string,
+    mode: IDBTransactionMode = 'readonly',
+    options?: IDBTransactionOptions
+  ): AppResponseType<IDBObjectStore> {
+    if (!this.db) {
+      return [null, new Error('Database not initialized')];
+    }
+
+    try {
+      const objectStore = this.db
+        .transaction(storeName, mode, options)
+        .objectStore(storeName);
+      return [objectStore, null];
+    } catch (err) {
+      return [
+        null,
+        err instanceof Error ? err : new Error('Transaction failed'),
+      ];
+    }
   }
 }
 

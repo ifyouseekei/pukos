@@ -1,13 +1,12 @@
 import DatabaseService from '../DatabaseService/DatabaseService';
-import { Todo } from './TodosService.types';
+import { toDatabase, toTodo } from './TodoDB.transformers';
+import { Todo, TodoInDB } from './TodosService.types';
 
 class TodoDB {
   private static instance: TodoDB | null = null;
 
-  static dbName = 'todoList';
+  public static storeName = 'todos';
   private databaseService: DatabaseService;
-  private databaseInstance: IDBDatabase | null = null;
-  private objectStore: IDBObjectStore | null = null;
 
   private constructor(databaseService: DatabaseService) {
     this.databaseService = databaseService;
@@ -17,22 +16,32 @@ class TodoDB {
    * Initializa DB and set its user store
    */
   async initDB(): Promise<void> {
-    const [databaseInstance, error] = await this.databaseService.connect(
-      TodoDB.dbName
-    );
+    const [, error] = await this.databaseService.connect(this.createStore);
     if (error !== null) {
       throw error;
     }
-    this.databaseInstance = databaseInstance;
+  }
 
-    this.objectStore = this.databaseInstance.createObjectStore('todos', {
+  private createStore(db: IDBDatabase) {
+    if (db.objectStoreNames.contains(TodoDB.storeName)) {
+      return;
+    }
+
+    const objectStore = db.createObjectStore(TodoDB.storeName, {
       autoIncrement: true,
+      keyPath: 'id',
     });
 
-    // Create an index to search customers by name. We may have duplicates
+    // Create an index to search todos.
+    objectStore.createIndex('id', 'id', { unique: true });
+
+    // We may have duplicates
     // so we can't use a unique index.
-    this.objectStore.createIndex('title', 'title', { unique: false });
-    this.objectStore.createIndex('description', 'description', {
+    objectStore.createIndex('title', 'title', { unique: false });
+    objectStore.createIndex('isCompleted', 'isCompleted', {
+      unique: false,
+    });
+    objectStore.createIndex('description', 'description', {
       unique: false,
     });
   }
@@ -42,11 +51,19 @@ class TodoDB {
    */
   public add(todo: Todo): Promise<AppResponseType<Todo>> {
     return new Promise((resolve) => {
-      if (!this.objectStore) {
-        return resolve([null, new Error('no object store found')]);
+      if (!this.databaseService) {
+        return resolve([null, new Error('no database found')]);
       }
 
-      const request = this.objectStore.add(todo);
+      const [objectStore, error] = this.databaseService.getObjectStore(
+        TodoDB.storeName,
+        'readwrite'
+      );
+      if (error) {
+        return resolve([null, error]);
+      }
+
+      const request = objectStore.put(toDatabase(todo));
       request.onsuccess = () => resolve([todo, null]);
       request.onerror = () => resolve([null, new Error('failed to save todo')]);
     });
@@ -58,38 +75,119 @@ class TodoDB {
    */
   public deleteByKey(key: number): Promise<Error | null> {
     return new Promise((resolve) => {
-      if (!this.objectStore) {
-        return resolve(new Error('no object store found'));
+      if (!this.databaseService) {
+        return resolve(new Error('no database found'));
       }
 
-      const request = this.objectStore.delete(key);
+      const [objectStore, error] = this.databaseService.getObjectStore(
+        TodoDB.storeName,
+        'readwrite'
+      );
+
+      if (error) {
+        return resolve(error);
+      }
+
+      const request = objectStore.delete(key);
       request.onsuccess = () => resolve(null);
       request.onerror = () => resolve(new Error('failed to save todo'));
     });
   }
 
   /**
-   * Get a Todo by its key
-   * @param key The key value of IndexedDB
+   * Get a Todo by its ID
    */
-  public getByKey(key: number): Promise<AppResponseType<Todo>> {
+  public getById(id: Todo['id']): Promise<AppResponseType<Todo>> {
     return new Promise((resolve) => {
-      if (!this.objectStore) {
-        return resolve([null, new Error('no object store found')]);
+      if (!this.databaseService) {
+        return resolve([null, new Error('no database found')]);
       }
 
-      const request = this.objectStore.get(key);
+      const [objectStore, error] = this.databaseService.getObjectStore(
+        TodoDB.storeName,
+        'readwrite'
+      );
+
+      if (error) {
+        return resolve([null, error]);
+      }
+
+      const request = objectStore.get(id);
       request.onsuccess = () => {
         if (!TodoDB.isTodo(request.result)) {
           return resolve([null, new Error('the returned value is not a todo')]);
         }
-        return resolve([request.result, null]);
+        return resolve([toTodo(request.result), null]);
       };
       request.onerror = () => resolve([null, new Error('failed to save todo')]);
     });
   }
 
-  public static isTodo(data: unknown): data is Todo {
+  /**
+   * Get all todos that are not yet completed
+   * This will be mainly used for displaying current todos
+   */
+  public getList({
+    isCompleted,
+  }: {
+    isCompleted?: boolean;
+  }): Promise<AppResponseType<Todo[]>> {
+    return new Promise((resolve) => {
+      if (!this.databaseService) {
+        return resolve([null, new Error('no database found')]);
+      }
+
+      const [objectStore, error] = this.databaseService.getObjectStore(
+        TodoDB.storeName,
+        'readwrite'
+      );
+
+      if (error) {
+        return resolve([null, error]);
+      }
+
+      let getAllRequest: IDBRequest<any[]>;
+      if (typeof isCompleted !== 'undefined') {
+        const index = objectStore.index('isCompleted');
+        const range = IDBKeyRange.only(isCompleted ? 1 : 0);
+        getAllRequest = index.getAll(range);
+      } else {
+        getAllRequest = objectStore.getAll();
+      }
+
+      getAllRequest.onsuccess = () => {
+        if (!TodoDB.isTodoList(getAllRequest.result)) {
+          return resolve([
+            null,
+            new Error('the returned value is not a todo list'),
+          ]);
+        }
+
+        return resolve([getAllRequest.result.map(toTodo), null]);
+      };
+      getAllRequest.onerror = () =>
+        resolve([null, new Error('failed to getList')]);
+    });
+  }
+
+  public static isTodoList(data: unknown[]): data is TodoInDB[] {
+    if (!Array.isArray(data)) {
+      return false;
+    }
+
+    return data.every(
+      (item) =>
+        typeof item === 'object' &&
+        item !== null &&
+        'id' in item &&
+        'title' in item &&
+        'description' in item &&
+        'isCompleted' in item &&
+        'createdAt' in item
+    );
+  }
+
+  public static isTodo(data: unknown): data is TodoInDB {
     if (typeof data !== 'object') {
       return false;
     }
@@ -97,19 +195,20 @@ class TodoDB {
     const todo = data as Partial<Todo>;
 
     return (
-      typeof todo.title === 'string' &&
-      typeof todo.description === 'string' &&
-      typeof todo.isCompleted === 'boolean' &&
-      todo.createdAt instanceof Date
+      'id' in todo &&
+      'title' in todo &&
+      'description' in todo &&
+      'isCompleted' in todo &&
+      'createdAt' in todo
     );
   }
 
   static getInstance(): TodoDB {
     if (!TodoDB.instance) {
-      TodoDB.instance = new TodoDB(new DatabaseService());
+      TodoDB.instance = new TodoDB(DatabaseService.getInstance());
     }
     return TodoDB.instance;
   }
 }
 
-export default TodoDB.getInstance();
+export default TodoDB;
