@@ -13,7 +13,6 @@ class HomePage {
 
   public countdownTimerEl: HTMLSpanElement;
   public totalFocusTimeEl: HTMLSpanElement;
-  public takeABreakButtonEl: HTMLButtonElement;
   public endSessionButtonEl: HTMLButtonElement;
   public intervalEls: NodeListOf<HTMLInputElement>;
   public cleanupCallbacks: Array<() => void> = [];
@@ -21,7 +20,6 @@ class HomePage {
   private constructor() {
     this.countdownTimerEl = getOrThrowElement('#countdown-timer');
     this.totalFocusTimeEl = getOrThrowElement('#total-focus-time');
-    this.takeABreakButtonEl = getOrThrowElement('#take-a-break-button');
     this.endSessionButtonEl = getOrThrowElement('#end-session-button');
     this.intervalEls = document.querySelectorAll('input[name="interval"]');
   }
@@ -36,10 +34,6 @@ class HomePage {
   }
 
   private initButtons(): void {
-    this.takeABreakButtonEl.addEventListener('click', () => {
-      PomodoroService.onBreak();
-    });
-
     this.endSessionButtonEl.addEventListener('click', () => {
       IdleCheckerService.stop();
       PomodoroService.onReset();

@@ -1,4 +1,3 @@
-import IdleCheckerService from '../services/IdleCheckerService.js';
 import { PomodoroStates } from '../services/PomodoService/Pomodoro.types.js';
 import PomodoroService from '../services/PomodoService/PomodoroService';
 import { getOrThrowElement } from '../utils/getOrThrowElement.js';
@@ -11,8 +10,6 @@ class FocusButtonSection {
     // init elements
     this.focusTextEl = getOrThrowElement('#focus-text');
     this.focusButtonEl = getOrThrowElement('#focus-button');
-
-    this.init();
   }
 
   init() {
@@ -25,12 +22,12 @@ class FocusButtonSection {
 
   handleClick() {
     switch (PomodoroService.state.getValue()) {
-      case 'pre-break':
+      case 'pre-focus':
       case 'break':
-        IdleCheckerService.init();
+        // IdleCheckerService.init();
         PomodoroService.onFocus();
         break;
-      case 'pre-focus':
+      case 'pre-break':
       case 'focus':
         PomodoroService.onBreak();
         break;
