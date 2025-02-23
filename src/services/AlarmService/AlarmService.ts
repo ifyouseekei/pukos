@@ -81,4 +81,4 @@ class AlarmService {
   }
 }
 
-export default AlarmService.getInstance();
+export default AlarmService;

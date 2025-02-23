@@ -22,6 +22,7 @@ class PomodoroService {
   remainingTime = new Observable<number>(IntervalService.focusTime);
   focusTime = new Observable<number>(0);
   totalTime = new Observable<number>(0);
+  alarmService: AlarmService;
 
   // Flag if the timer is running
   isTimerRunning: boolean = false;
@@ -33,6 +34,7 @@ class PomodoroService {
       );
     }
 
+    this.alarmService = AlarmService.getInstance();
     this.tickWorker = new TickWorker();
     // Whenever the interval is changed, it should reset
     IntervalService.interval.subscribe(this.onReset.bind(this));
@@ -44,8 +46,8 @@ class PomodoroService {
    * Resets the pomodoro state to the initial state
    */
   public onReset(): void {
-    if (AlarmService.isPlayingAlarm.getValue()) {
-      AlarmService.stopAlarm();
+    if (this.alarmService.isPlayingAlarm.getValue()) {
+      this.alarmService.stopAlarm();
     }
     this.isTimerRunning = false;
     this.remainingTime.setValue(IntervalService.focusTime);
@@ -71,7 +73,7 @@ class PomodoroService {
    * Starts the "Focus" mode
    */
   public onFocus(): void {
-    AlarmService.stopAlarm();
+    this.alarmService.stopAlarm();
     this.isTimerRunning = true;
     this.tickWorker.start();
     this.remainingTime.setValue(IntervalService.focusTime);
@@ -82,7 +84,7 @@ class PomodoroService {
    * Starts the "Break" mode
    */
   public onBreak(): void {
-    AlarmService.stopAlarm();
+    this.alarmService.stopAlarm();
     this.isTimerRunning = true;
     this.tickWorker.start();
     this.remainingTime.setValue(IntervalService.breakTime);
@@ -143,7 +145,7 @@ class PomodoroService {
    * When the timer has finished (like it reached 00:00)
    */
   private onTimerFinished(): void {
-    AlarmService.playAlarm();
+    this.alarmService.playAlarm();
     // TODO: Autoplay and idle should modify things here
     this.isTimerRunning = false;
     this.tickWorker.stop();
