@@ -6,13 +6,13 @@ import {
   secondsToFormattedTime,
   secondsToMinuteString,
 } from '../utils/timeFormatter.utils.js';
+import FocusButtonSection from './FocusButtonSection.js';
 
 class HomePage {
   private static instance: HomePage | null = null;
 
   public countdownTimerEl: HTMLSpanElement;
   public totalFocusTimeEl: HTMLSpanElement;
-  public focusButtonEl: HTMLButtonElement;
   public takeABreakButtonEl: HTMLButtonElement;
   public endSessionButtonEl: HTMLButtonElement;
   public intervalEls: NodeListOf<HTMLInputElement>;
@@ -21,7 +21,6 @@ class HomePage {
   private constructor() {
     this.countdownTimerEl = getOrThrowElement('#countdown-timer');
     this.totalFocusTimeEl = getOrThrowElement('#total-focus-time');
-    this.focusButtonEl = getOrThrowElement('#focus-button');
     this.takeABreakButtonEl = getOrThrowElement('#take-a-break-button');
     this.endSessionButtonEl = getOrThrowElement('#end-session-button');
     this.intervalEls = document.querySelectorAll('input[name="interval"]');
@@ -33,14 +32,10 @@ class HomePage {
     this.initCountdownTimer();
     this.initTotalFocusTime();
     this.initTitleChange();
+    new FocusButtonSection().init();
   }
 
   private initButtons(): void {
-    this.focusButtonEl.addEventListener('click', () => {
-      IdleCheckerService.init();
-      PomodoroService.onFocus();
-    });
-
     this.takeABreakButtonEl.addEventListener('click', () => {
       PomodoroService.onBreak();
     });
