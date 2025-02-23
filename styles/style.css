@@ -5,6 +5,9 @@
   --secondary-color: #e1c16e;
   --grey-color: #737373;
   --accent-color: #b8d5c3;
+
+  /** Spacings **/
+  --external-padding: 48px;
 }
 
 html,
@@ -35,7 +38,7 @@ body {
 }
 
 .container {
-  padding: 48px;
+  padding: var(--external-padding, 48px);
   height: 100%;
 }
 
@@ -47,7 +50,7 @@ body {
 .time-container {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
 }
 
 .interval-container {
@@ -59,16 +62,26 @@ body {
   flex-direction: column;
 }
 
-.focus-break-container {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-}
-
 .end-session-container {
   position: absolute;
   left: 0;
   bottom: 0;
+}
+
+.music-container {
+  position: absolute;
+  right: 0;
+  top: 0;
+  text-align: right;
+}
+
+.text-button {
+  color: var(--secondary-color);
+  transition: color 200ms ease-in-out;
+}
+
+.text-button:hover {
+  color: var(--primary-color);
 }
 
 #end-session-button {
@@ -78,6 +91,43 @@ body {
 #end-session-button:hover {
   color: var(--primary-color);
 }
+
+.focus-break-container {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+}
+
 #focus-button {
   color: var(--primary-color);
+  width: 50vw;
+  height: 35vh;
+  border-top-left-radius: 100%; /* Apply curve only to the top-left corner */
+  transition: all 200ms ease-in-out;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: var(--external-padding, 48px);
+}
+
+.focus-button__overlay {
+  position: absolute;
+  transition: all 100ms ease-in-out;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--secondary-color);
+  border-top-left-radius: 100%; /* Apply curve only to the top-left corner */
+  z-index: -1;
+}
+
+#focus-button:hover {
+  color: var(--secondary-color);
+}
+
+#focus-button:hover .focus-button__overlay {
+  transform: scale(1.2);
+  background-color: var(--primary-color);
 }

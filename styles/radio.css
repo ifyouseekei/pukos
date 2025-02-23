@@ -4,10 +4,11 @@
 
 .radio label {
   cursor: pointer;
-  font-size: 48px;
-  letter-spacing: -0.04em;
-  font-weight: 500;
+  line-height: normal;
   transition: color 0.2s ease-in-out;
+}
+
+.radio--green {
   color: var(--accent-color);
 }
 
@@ -17,7 +18,7 @@
 }
 
 /* When any label is hovered, change the color of all labels */
-.radio-group-container:hover .radio label {
+.radio-group-container:hover .radio--green label {
   color: var(--accent-color);
 }
 

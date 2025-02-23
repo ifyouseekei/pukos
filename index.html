@@ -30,44 +30,80 @@
 
         <section class="interval-container radio-group-container">
           <h3 class="heading-xs text-grey">INTERVAL</h3>
-          <section class="radio">
+          <section class="radio radio--green">
             <input
               type="radio"
               id="interval_25_5"
               name="interval"
               value="25:5"
             />
-            <label for="interval_25_5">25:5</label>
+            <label class="heading-md" for="interval_25_5">25:5</label>
           </section>
-          <section class="radio">
+          <section class="radio radio--green">
             <input
               type="radio"
               id="interval_50_10"
               name="interval"
               value="50:10"
             />
-            <label for="interval_50_10">50:10</label>
+            <label class="heading-md" for="interval_50_10">50:10</label>
           </section>
-          <section class="radio">
+          <section class="radio radio--green">
             <input
               type="radio"
               id="interval_90_30"
               name="interval"
               value="90:30"
             />
-            <label for="interval_90_30">90:30</label>
+            <label class="heading-md" for="interval_90_30">90:30</label>
           </section>
         </section>
 
         <section class="focus-break-container">
-          <button id="focus-button" class="heading-lg">Focus</button>
-          <button id="take-a-break-button" class="heading-lg">Break</button>
+          <button id="focus-button" class="heading-lg">
+            <span>Focus</span>
+            <div class="focus-button__overlay"></div>
+          </button>
+          <button
+            id="take-a-break-button"
+            style="display: none"
+            class="heading-lg"
+          >
+            Break
+          </button>
         </section>
 
         <section class="end-session-container">
           <button id="end-session-button" class="heading-md text-secondary">
             End Session
           </button>
+        </section>
+
+        <section class="music-container">
+          <button
+            id="play-music-button"
+            class="heading-md text-secondary text-button"
+          >
+            Play Music
+          </button>
+          <section class="radio">
+            <input
+              type="radio"
+              id="music_brown_noise"
+              name="interval"
+              value="brown_noise"
+            />
+            <label for="music_brown_noise">Brown noise</label>
+          </section>
+          <section class="radio">
+            <input
+              type="radio"
+              id="music_white_noise"
+              name="interval"
+              value="white_noise"
+            />
+            <label for="music_white_noise">White noise</label>
+          </section>
         </section>
       </div>
     </main>
