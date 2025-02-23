@@ -1,6 +1,6 @@
 import { Observable } from '../../utils/Observable.js';
 import { TICK_IDS, TickWorker } from '../../utils/TickWorker.js';
-import AudioService from '../AudioService/index.js';
+import AlarmService from '../AlarmService/index.js';
 import IntervalService from '../IntervalService/index.js';
 import { PomodoroStates } from './Pomodoro.types.js';
 
@@ -44,8 +44,8 @@ class PomodoroService {
    * Resets the pomodoro state to the initial state
    */
   public onReset(): void {
-    if (AudioService.isPlayingAlarm.getValue()) {
-      AudioService.stopAlarm();
+    if (AlarmService.isPlayingAlarm.getValue()) {
+      AlarmService.stopAlarm();
     }
     this.isTimerRunning = false;
     this.remainingTime.setValue(IntervalService.focusTime);
@@ -71,7 +71,7 @@ class PomodoroService {
    * Starts the "Focus" mode
    */
   public onFocus(): void {
-    AudioService.stopAlarm();
+    AlarmService.stopAlarm();
     this.isTimerRunning = true;
     this.tickWorker.start();
     this.remainingTime.setValue(IntervalService.focusTime);
@@ -82,7 +82,7 @@ class PomodoroService {
    * Starts the "Break" mode
    */
   public onBreak(): void {
-    AudioService.stopAlarm();
+    AlarmService.stopAlarm();
     this.isTimerRunning = true;
     this.tickWorker.start();
     this.remainingTime.setValue(IntervalService.breakTime);
@@ -143,7 +143,7 @@ class PomodoroService {
    * When the timer has finished (like it reached 00:00)
    */
   private onTimerFinished(): void {
-    AudioService.playAlarm();
+    AlarmService.playAlarm();
     // TODO: Autoplay and idle should modify things here
     this.isTimerRunning = false;
     this.tickWorker.stop();

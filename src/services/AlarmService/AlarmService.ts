@@ -4,13 +4,13 @@ import { Observable } from '../../utils/Observable.js';
  * This class controls audio related functions
  * e.g. When timer has finished, and play background music
  */
-class AudioService {
-  private static instance: AudioService | null = null;
+class AlarmService {
+  private static instance: AlarmService | null = null;
   isPlayingAlarm = new Observable<boolean>(false);
   private alarmAudio: HTMLAudioElement | null;
 
   private constructor() {
-    if (AudioService.instance) {
+    if (AlarmService.instance) {
       throw new Error(
         'Cannot create multiple instances of a Singleton. Use getInstance() instead.'
       );
@@ -22,9 +22,9 @@ class AudioService {
     this.cleanup();
   }
 
-  public static getInstance(): AudioService {
+  public static getInstance(): AlarmService {
     if (!this.instance) {
-      this.instance = new AudioService();
+      this.instance = new AlarmService();
     }
 
     return this.instance;
@@ -81,4 +81,4 @@ class AudioService {
   }
 }
 
-export default AudioService.getInstance();
+export default AlarmService.getInstance();
