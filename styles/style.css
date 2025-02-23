@@ -79,6 +79,9 @@ body {
   right: 0;
   top: 0;
   text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .text-button {

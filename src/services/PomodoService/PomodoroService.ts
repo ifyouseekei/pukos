@@ -117,7 +117,7 @@ class PomodoroService {
         this.countUpFocusTime();
 
         // Countdown timer reaches 0
-        if (this.remainingTime.getValue() <= 1) {
+        if (this.remainingTime.getValue() <= 0) {
           this.onTimerFinished();
         }
       }
@@ -151,7 +151,6 @@ class PomodoroService {
     // Timer ended whilst on "focus" mode
     if (this.state.getValue() === 'focus') {
       this.state.setValue('pre-break');
-      this.remainingTime.setValue(IntervalService.breakTime);
 
       return;
     }
@@ -159,7 +158,6 @@ class PomodoroService {
     // Timer ended whilst on "break" mode
     if (this.state.getValue() === 'break') {
       this.state.setValue('pre-focus');
-      this.remainingTime.setValue(IntervalService.focusTime);
     }
   }
 

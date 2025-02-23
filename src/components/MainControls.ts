@@ -49,6 +49,7 @@ class MainControls {
       default:
     }
   }
+
   handleEndSession() {
     // IdleCheckerService.stop();
     PomodoroService.onReset();
