@@ -1,12 +1,14 @@
 import { PomodoroStates } from '../services/PomodoService/Pomodoro.types.js';
-import PomodoroService from '../services/PomodoService/PomodoroService';
+import PomodoroService from '../services/PomodoService/PomodoroService.js';
 import { getOrThrowElement } from '../utils/getOrThrowElement.js';
 
 /**
  * This class controls the actions and events
- * of the "Focus Button"
+ * of the "Focus Button" and "End Session".
+ *
+ * More likely the main controls of the pomodoro
  */
-class FocusButtonSection {
+class MainControls {
   focusTextEl: HTMLSpanElement;
   focusButtonEl: HTMLButtonElement;
   endSessionButtonEl: HTMLButtonElement;
@@ -83,4 +85,4 @@ class FocusButtonSection {
   }
 }
 
-export default FocusButtonSection;
+export default MainControls;

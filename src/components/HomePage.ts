@@ -5,7 +5,7 @@ import {
   secondsToFormattedTime,
   secondsToMinuteString,
 } from '../utils/timeFormatter.utils.js';
-import FocusButtonSection from './FocusButtonSection.js';
+import MainControls from './MainControls.js';
 
 class HomePage {
   private static instance: HomePage | null = null;
@@ -15,13 +15,13 @@ class HomePage {
   public intervalEls: NodeListOf<HTMLInputElement>;
   public cleanupCallbacks: Array<() => void> = [];
 
-  private focusButtonSection: FocusButtonSection;
+  private mainControls: MainControls;
 
   private constructor() {
     this.countdownTimerEl = getOrThrowElement('#countdown-timer');
     this.totalFocusTimeEl = getOrThrowElement('#total-focus-time');
     this.intervalEls = document.querySelectorAll('input[name="interval"]');
-    this.focusButtonSection = new FocusButtonSection();
+    this.mainControls = new MainControls();
   }
 
   init() {
@@ -29,7 +29,7 @@ class HomePage {
     this.initCountdownTimer();
     this.initTotalFocusTime();
     this.initTitleChange();
-    this.focusButtonSection.init();
+    this.mainControls.init();
   }
 
   private initIntervals(): void {
@@ -116,7 +116,7 @@ class HomePage {
 
   cleanup(): void {
     this.cleanupCallbacks.forEach((cb) => cb());
-    this.focusButtonSection.cleanup();
+    this.mainControls.cleanup();
   }
 
   public static getInstance(): HomePage {
