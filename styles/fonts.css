@@ -1,0 +1,24 @@
+.heading-xl {
+  font-size: 128px;
+  line-height: 108px;
+  letter-spacing: -0.04em;
+  font-weight: 700;
+}
+
+.heading-lg {
+  font-size: 64px;
+  line-height: 72px;
+  letter-spacing: -0.04em;
+  font-weight: 700;
+}
+
+.heading-md {
+  font-size: 48px;
+  letter-spacing: -0.04em;
+  font-weight: 500;
+}
+
+.heading-xs {
+  font-size: 12px;
+  letter-spacing: 0.4em;
+}

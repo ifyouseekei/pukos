@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Pukos - Productivity Timer</title>
-    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./styles/preflight.css" />
+    <link rel="stylesheet" href="./styles/style.css" />
+    <link rel="stylesheet" href="./styles/fonts.css" />
+    <link rel="stylesheet" href="./styles/radio.css" />
     <link rel="icon" href="./favicon.ico" type="image/x-icon" />
   </head>
   <body>
@@ -14,22 +17,61 @@
       Your browser does not support the audio element.
     </audio>
 
-    <button id="focus-button">Focus</button>
-    <button id="take-a-break-button">Break</button>
-    <button id="end-session-button">End Session</button>
-    <p>Coundown Timer: <span id="countdown-timer"></span></p>
-    <p>Total Focus Time: <span id="total-focus-time"></span></p>
+    <main class="container">
+      <div class="wrapper">
+        <section class="time-container">
+          <p class="heading-xl text-primary">
+            <span id="countdown-timer">25:00</span>
+          </p>
+          <p class="heading-md text-grey">
+            Focus Time —<span id="total-focus-time">00:00</span>
+          </p>
+        </section>
 
-    <div>
-      <section>
-        <input type="radio" id="interval_25_5" name="interval" value="25:5" />
-        <label for="interval_25_5">25:5</label><br />
-        <input type="radio" id="interval_50_10" name="interval" value="50:10" />
-        <label for="interval_50_10">50:10</label><br />
-        <input type="radio" id="interval_90_30" name="interval" value="90:30" />
-        <label for="interval_90_30">90:30</label>
-      </section>
-    </div>
+        <section class="interval-container radio-group-container">
+          <h3 class="heading-xs text-grey">INTERVAL</h3>
+          <section class="radio">
+            <input
+              type="radio"
+              id="interval_25_5"
+              name="interval"
+              value="25:5"
+            />
+            <label for="interval_25_5">25:5</label>
+          </section>
+          <section class="radio">
+            <input
+              type="radio"
+              id="interval_50_10"
+              name="interval"
+              value="50:10"
+            />
+            <label for="interval_50_10">50:10</label>
+          </section>
+          <section class="radio">
+            <input
+              type="radio"
+              id="interval_90_30"
+              name="interval"
+              value="90:30"
+            />
+            <label for="interval_90_30">90:30</label>
+          </section>
+        </section>
+
+        <section class="focus-break-container">
+          <button id="focus-button" class="heading-lg">Focus</button>
+          <button id="take-a-break-button" class="heading-lg">Break</button>
+        </section>
+
+        <section class="end-session-container">
+          <button id="end-session-button" class="heading-md text-secondary">
+            End Session
+          </button>
+        </section>
+      </div>
+    </main>
+
     <script type="module" src="src/index.ts"></script>
   </body>
 </html>

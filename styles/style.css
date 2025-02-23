@@ -1,0 +1,83 @@
+:root {
+  /** Colors */
+  --background-color: #f8f8f2;
+  --primary-color: #4a2e1c;
+  --secondary-color: #e1c16e;
+  --grey-color: #737373;
+  --accent-color: #b8d5c3;
+}
+
+html,
+body {
+  background-color: var(--background-color);
+  color: var(--primary-color);
+  height: 100%;
+}
+
+.text-background {
+  color: var(--background-color);
+}
+
+.text-primary {
+  color: var(--primary-color);
+}
+
+.text-secondary {
+  color: var(--secondary-color);
+}
+
+.text-grey {
+  color: var(--grey-color);
+}
+
+.text-accent {
+  color: var(--accent-color);
+}
+
+.container {
+  padding: 48px;
+  height: 100%;
+}
+
+.wrapper {
+  position: relative;
+  height: 100%;
+}
+
+.time-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.interval-container {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+
+  display: flex;
+  flex-direction: column;
+}
+
+.focus-break-container {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+.end-session-container {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+
+#end-session-button {
+  color: var(--secondary-color);
+  transition: color 200ms ease-in-out;
+}
+#end-session-button:hover {
+  color: var(--primary-color);
+}
+#focus-button {
+  color: var(--primary-color);
+}

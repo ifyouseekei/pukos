@@ -1,0 +1,26 @@
+.radio input[type='radio'] {
+  display: none; /* Hide the input */
+}
+
+.radio label {
+  cursor: pointer;
+  font-size: 48px;
+  letter-spacing: -0.04em;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out;
+  color: var(--accent-color);
+}
+
+/* When a radio is checked, only that label stays in primary color */
+.radio [type='radio']:checked + label {
+  color: var(--primary-color);
+}
+
+/* When any label is hovered, change the color of all labels */
+.radio-group-container:hover .radio label {
+  color: var(--accent-color);
+}
+
+.radio:hover label {
+  color: var(--primary-color) !important;
+}
