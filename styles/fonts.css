@@ -26,14 +26,15 @@ body {
 }
 
 .heading-lg {
-  font-size: 64px;
+  font-size: 48px;
   line-height: 72px;
   letter-spacing: -0.04em;
   font-weight: 700;
 }
 
 .heading-md {
-  font-size: 48px;
+  font-size: 36px;
+  line-height: 30px;
   letter-spacing: -0.04em;
   font-weight: 500;
 }
@@ -41,4 +42,5 @@ body {
 .heading-xs {
   font-size: 12px;
   letter-spacing: 0.4em;
+  font-weight: 500;
 }

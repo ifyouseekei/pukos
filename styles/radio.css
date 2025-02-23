@@ -4,7 +4,6 @@
 
 .radio label {
   cursor: pointer;
-  line-height: normal;
   transition: color 0.2s ease-in-out;
 }
 

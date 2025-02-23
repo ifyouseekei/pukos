@@ -1,0 +1,61 @@
+.focus-break-container {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+}
+
+.focus-button {
+  color: var(--primary-color);
+  width: 50vw;
+  height: 35vh;
+  border-top-left-radius: 100%; /* Apply curve only to the top-left corner */
+  transition: all 100ms ease-in-out;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: var(--external-padding, 48px);
+}
+
+.focus-button__overlay {
+  position: absolute;
+  transition: all 100ms ease-in-out;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--secondary-color);
+  border-top-left-radius: 100%; /* Apply curve only to the top-left corner */
+  z-index: -1;
+}
+
+.focus-button:hover {
+  color: var(--secondary-color);
+}
+
+.focus-button:hover .focus-button__overlay {
+  transform: scale(1.2);
+  background-color: var(--primary-color);
+}
+
+/* focus mode */
+.focus-button--focus {
+  background-color: var(--grey-color);
+  color: var(--accent-color);
+}
+.focus-button--focus:hover .focus-button__overlay {
+  background-color: var(--grey-color);
+}
+
+/* break mode */
+.focus-button--break {
+  background-color: var(--secondary-color);
+}
+.focus-button--break:hover,
+.focus-button--break:hover .focus-button__overlay {
+  background-color: var(--primary-color);
+}
+
+.focus-button--pre-break {
+  background-color: var(--primary-color);
+}

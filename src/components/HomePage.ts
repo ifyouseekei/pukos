@@ -1,4 +1,3 @@
-import IdleCheckerService from '../services/IdleCheckerService.js';
 import IntervalService from '../services/IntervalService/index.js';
 import PomodoroService from '../services/PomodoService/PomodoroService.js';
 import { getOrThrowElement } from '../utils/getOrThrowElement.js';
@@ -13,31 +12,24 @@ class HomePage {
 
   public countdownTimerEl: HTMLSpanElement;
   public totalFocusTimeEl: HTMLSpanElement;
-  public endSessionButtonEl: HTMLButtonElement;
   public intervalEls: NodeListOf<HTMLInputElement>;
   public cleanupCallbacks: Array<() => void> = [];
+
+  private focusButtonSection: FocusButtonSection;
 
   private constructor() {
     this.countdownTimerEl = getOrThrowElement('#countdown-timer');
     this.totalFocusTimeEl = getOrThrowElement('#total-focus-time');
-    this.endSessionButtonEl = getOrThrowElement('#end-session-button');
     this.intervalEls = document.querySelectorAll('input[name="interval"]');
+    this.focusButtonSection = new FocusButtonSection();
   }
 
   init() {
-    this.initButtons();
     this.initIntervals();
     this.initCountdownTimer();
     this.initTotalFocusTime();
     this.initTitleChange();
-    new FocusButtonSection().init();
-  }
-
-  private initButtons(): void {
-    this.endSessionButtonEl.addEventListener('click', () => {
-      IdleCheckerService.stop();
-      PomodoroService.onReset();
-    });
+    this.focusButtonSection.init();
   }
 
   private initIntervals(): void {
@@ -124,6 +116,7 @@ class HomePage {
 
   cleanup(): void {
     this.cleanupCallbacks.forEach((cb) => cb());
+    this.focusButtonSection.cleanup();
   }
 
   public static getInstance(): HomePage {

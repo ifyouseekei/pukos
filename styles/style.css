@@ -60,12 +60,18 @@ body {
 
   display: flex;
   flex-direction: column;
+  gap: 8px;
 }
 
 .end-session-container {
   position: absolute;
   left: 0;
   bottom: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
 }
 
 .music-container {
@@ -90,44 +96,4 @@ body {
 }
 #end-session-button:hover {
   color: var(--primary-color);
-}
-
-.focus-break-container {
-  position: fixed;
-  right: 0;
-  bottom: 0;
-}
-
-#focus-button {
-  color: var(--primary-color);
-  width: 50vw;
-  height: 35vh;
-  border-top-left-radius: 100%; /* Apply curve only to the top-left corner */
-  transition: all 200ms ease-in-out;
-
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-  padding: var(--external-padding, 48px);
-}
-
-.focus-button__overlay {
-  position: absolute;
-  transition: all 100ms ease-in-out;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--secondary-color);
-  border-top-left-radius: 100%; /* Apply curve only to the top-left corner */
-  z-index: -1;
-}
-
-#focus-button:hover {
-  color: var(--secondary-color);
-}
-
-#focus-button:hover .focus-button__overlay {
-  transform: scale(1.2);
-  background-color: var(--primary-color);
 }
