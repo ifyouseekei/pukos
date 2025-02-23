@@ -2,6 +2,7 @@ import TodosService from '../services/TodosService/TodosService.js';
 import { Todo } from '../services/TodosService/TodosService.types.js';
 import { getOrThrowElement } from '../utils/getOrThrowElement.js';
 import { Observable } from '../utils/Observable.js';
+import { TodoItem } from './web-components/TodoItem.js';
 
 class TodoSection {
   private static instance: TodoSection | null = null;
@@ -26,7 +27,7 @@ class TodoSection {
 
   private async init() {
     await this.initializeList();
-    this.todosService.todos.subscribe(this.displayTodos.bind(this));
+    this.todosService.todos.subscribe(this.renderTodos.bind(this));
   }
 
   private async initializeList() {
@@ -40,25 +41,17 @@ class TodoSection {
     }
   }
 
-  private displayTodos(todos: Todo[]) {
+  private renderTodos(todos: Todo[]) {
     // Clear the existing list before re-rendering
     this.todoContainerEl.innerHTML = '';
 
     // Loop through each todo and add it to the list
     todos.forEach((todo) => {
-      const li = document.createElement('li');
-      li.innerHTML = this.getTemplate(todo);
+      const li = document.createElement('todo-item') as TodoItem;
+      li.setAttribute('title', todo.title);
+      li.setAttribute('description', todo.description);
       this.todoContainerEl.appendChild(li);
     });
-  }
-
-  private getTemplate(todo: Todo): string {
-    return /* html */ `
-      <div id="todo-li-${todo.id}">
-        <p>${todo.title}</p>
-        <p>${todo.description}</p>
-      </div>
-    `;
   }
 }
 
