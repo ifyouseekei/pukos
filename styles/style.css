@@ -4,7 +4,7 @@
   --primary-color: #4a2e1c;
   --secondary-color: #d6a375;
   --grey-color: #737373;
-  --accent-color: #b8d5c3;
+  --accent-color: #a2c2ae;
 
   /** Spacings **/
   --external-padding: 48px;
@@ -86,11 +86,28 @@ body {
 
 .text-button {
   color: var(--secondary-color);
-  transition: color 200ms ease-in-out;
+  transition: all 200ms ease-in-out;
 }
 
 .text-button:hover {
   color: var(--primary-color);
+}
+
+.text-button:active {
+  transform: scale(0.95);
+}
+
+.text-button--accent {
+  color: var(--accent-color);
+  transition: all 200ms ease-in-out;
+}
+
+.text-button--accent:hover {
+  color: var(--primary-color);
+}
+
+.text-button--accent:active {
+  transform: scale(0.95);
 }
 
 #end-session-button {
@@ -99,4 +116,11 @@ body {
 }
 #end-session-button:hover {
   color: var(--primary-color);
+}
+
+.focus-time-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
 }

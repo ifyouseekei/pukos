@@ -12,6 +12,7 @@ class HomePage {
 
   public countdownTimerEl: HTMLSpanElement;
   public totalFocusTimeEl: HTMLSpanElement;
+  public resetFocusTimeEl: HTMLButtonElement;
   public intervalEls: NodeListOf<HTMLInputElement>;
   public cleanupCallbacks: Array<() => void> = [];
 
@@ -20,6 +21,7 @@ class HomePage {
   private constructor() {
     this.countdownTimerEl = getOrThrowElement('#countdown-timer');
     this.totalFocusTimeEl = getOrThrowElement('#total-focus-time');
+    this.resetFocusTimeEl = getOrThrowElement('#reset-focus-time');
     this.intervalEls = document.querySelectorAll('input[name="interval"]');
     this.mainControls = new MainControls();
   }
@@ -30,6 +32,10 @@ class HomePage {
     this.initTotalFocusTime();
     this.initTitleChange();
     this.mainControls.init();
+    this.resetFocusTimeEl.addEventListener(
+      'click',
+      this.handleResetFocusTimeClicked.bind(this)
+    );
   }
 
   private initIntervals(): void {
@@ -57,6 +63,10 @@ class HomePage {
         IntervalService.setInterval(selectedInterval);
       });
     });
+  }
+
+  private handleResetFocusTimeClicked(): void {
+    PomodoroService.onResetFocusTime();
   }
 
   private initCountdownTimer(): void {
