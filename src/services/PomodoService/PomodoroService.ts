@@ -18,14 +18,13 @@ class PomodoroService {
   private static instance: PomodoroService | null = null;
   private tickWorker: TickWorker;
 
-  state = new Observable<PomodoroStates>('pre-focus');
-  remainingTime = new Observable<number>(IntervalService.focusTime);
-  focusTime = new Observable<number>(0);
-  totalTime = new Observable<number>(0);
-  alarmService: AlarmService;
+  public state = new Observable<PomodoroStates>('pre-focus');
+  public remainingTime = new Observable<number>(IntervalService.focusTime);
+  public focusTime = new Observable<number>(0);
+  public totalTime = new Observable<number>(0);
+  public isTimerRunning: boolean = false;
 
-  // Flag if the timer is running
-  isTimerRunning: boolean = false;
+  private alarmService: AlarmService;
 
   private constructor() {
     if (PomodoroService.instance) {
@@ -174,4 +173,4 @@ class PomodoroService {
   }
 }
 
-export default PomodoroService.getInstance();
+export default PomodoroService;

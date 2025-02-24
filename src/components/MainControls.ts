@@ -9,6 +9,8 @@ import { getOrThrowElement } from '../utils/getOrThrowElement.js';
  * More likely the main controls of the pomodoro
  */
 class MainControls {
+  pomodoroService: PomodoroService;
+
   focusTextEl: HTMLSpanElement;
   focusButtonEl: HTMLButtonElement;
   endSessionButtonEl: HTMLButtonElement;
@@ -18,6 +20,7 @@ class MainControls {
     this.focusTextEl = getOrThrowElement('#focus-text');
     this.focusButtonEl = getOrThrowElement('#focus-button');
     this.endSessionButtonEl = getOrThrowElement('#end-session-button');
+    this.pomodoroService = PomodoroService.getInstance();
   }
 
   init() {
@@ -32,19 +35,21 @@ class MainControls {
     );
 
     // init subscriptions
-    PomodoroService.state.subscribe(this.handleChangePomodoroState.bind(this));
+    this.pomodoroService.state.subscribe(
+      this.handleChangePomodoroState.bind(this)
+    );
   }
 
   handleFocusButtonClicked() {
-    switch (PomodoroService.state.getValue()) {
+    switch (this.pomodoroService.state.getValue()) {
       case 'pre-focus':
       case 'break':
         // IdleCheckerService.init();
-        PomodoroService.onFocus();
+        this.pomodoroService.onFocus();
         break;
       case 'pre-break':
       case 'focus':
-        PomodoroService.onBreak();
+        this.pomodoroService.onBreak();
         break;
       default:
     }
@@ -52,7 +57,7 @@ class MainControls {
 
   handleEndSession() {
     // IdleCheckerService.stop();
-    PomodoroService.onReset();
+    this.pomodoroService.onReset();
   }
 
   handleChangePomodoroState(state: PomodoroStates) {
@@ -73,14 +78,14 @@ class MainControls {
         this.focusButtonEl.classList.add('focus-button--pre-break');
         break;
       case 'break':
-        this.focusTextEl.textContent = 'End Break';
+        this.focusTextEl.textContent = 'End Break and Focus';
         this.focusButtonEl.classList.add('focus-button--break');
         break;
     }
   }
 
   public cleanup() {
-    PomodoroService.state.unsubscribe(
+    this.pomodoroService.state.unsubscribe(
       this.handleChangePomodoroState.bind(this)
     );
   }

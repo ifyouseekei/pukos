@@ -17,6 +17,7 @@ class HomePage {
   public cleanupCallbacks: Array<() => void> = [];
 
   private mainControls: MainControls;
+  private pomodoroService: PomodoroService;
 
   private constructor() {
     this.countdownTimerEl = getOrThrowElement('#countdown-timer');
@@ -24,6 +25,7 @@ class HomePage {
     this.resetFocusTimeEl = getOrThrowElement('#reset-focus-time');
     this.intervalEls = document.querySelectorAll('input[name="interval"]');
     this.mainControls = new MainControls();
+    this.pomodoroService = PomodoroService.getInstance();
   }
 
   init() {
@@ -66,7 +68,7 @@ class HomePage {
   }
 
   private handleResetFocusTimeClicked(): void {
-    PomodoroService.onResetFocusTime();
+    this.pomodoroService.onResetFocusTime();
   }
 
   private initCountdownTimer(): void {
@@ -75,14 +77,14 @@ class HomePage {
     };
 
     // Set the initial value
-    updateCountdownContent(PomodoroService.remainingTime.getValue());
+    updateCountdownContent(this.pomodoroService.remainingTime.getValue());
 
     // Listen to changes on remaining time to reflect to the countdownTimer
-    PomodoroService.remainingTime.subscribe(updateCountdownContent);
+    this.pomodoroService.remainingTime.subscribe(updateCountdownContent);
 
     // Cleanup
     this.cleanupCallbacks.push(() => {
-      PomodoroService.remainingTime.unsubscribe(updateCountdownContent);
+      this.pomodoroService.remainingTime.unsubscribe(updateCountdownContent);
     });
   }
 
@@ -92,35 +94,37 @@ class HomePage {
     };
 
     // Set the initial value
-    updateTotalFocusTimeContent(PomodoroService.focusTime.getValue());
+    updateTotalFocusTimeContent(this.pomodoroService.focusTime.getValue());
 
     // Listen to changes
-    PomodoroService.focusTime.subscribe(updateTotalFocusTimeContent);
+    this.pomodoroService.focusTime.subscribe(updateTotalFocusTimeContent);
 
     // Cleanup
     this.cleanupCallbacks.push(() => {
-      PomodoroService.remainingTime.unsubscribe(updateTotalFocusTimeContent);
+      this.pomodoroService.remainingTime.unsubscribe(
+        updateTotalFocusTimeContent
+      );
     });
   }
 
   private initTitleChange(): void {
-    function modifyTitle(remainingTime: number) {
-      if (PomodoroService.state.getValue() === 'focus') {
+    const modifyTitle = (remainingTime: number) => {
+      if (this.pomodoroService.state.getValue() === 'focus') {
         document.title = `${secondsToMinuteString(remainingTime)} - Focus`;
         return;
       }
 
-      if (PomodoroService.state.getValue() === 'break') {
+      if (this.pomodoroService.state.getValue() === 'break') {
         document.title = `${secondsToMinuteString(remainingTime)} - Break`;
         return;
       }
-    }
+    };
 
-    PomodoroService.remainingTime.subscribe(modifyTitle);
+    this.pomodoroService.remainingTime.subscribe(modifyTitle);
 
     // Cleanup
     this.cleanupCallbacks.push(() => {
-      PomodoroService.remainingTime.unsubscribe(modifyTitle);
+      this.pomodoroService.remainingTime.unsubscribe(modifyTitle);
     });
   }
 
