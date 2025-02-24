@@ -1,5 +1,6 @@
 import IntervalService from '../services/IntervalService/index.js';
 import PomodoroService from '../services/PomodoService/PomodoroService.js';
+import { DocumentTitles } from '../utils/documentTitles.constants.js';
 import { getOrThrowElement } from '../utils/getOrThrowElement.js';
 import {
   secondsToFormattedTime,
@@ -110,12 +111,16 @@ class HomePage {
   private initTitleChange(): void {
     const modifyTitle = (remainingTime: number) => {
       if (this.pomodoroService.state.getValue() === 'focus') {
-        document.title = `${secondsToMinuteString(remainingTime)} - Focus`;
+        document.title = DocumentTitles.focusMode(
+          secondsToMinuteString(remainingTime)
+        );
         return;
       }
 
       if (this.pomodoroService.state.getValue() === 'break') {
-        document.title = `${secondsToMinuteString(remainingTime)} - Break`;
+        document.title = DocumentTitles.breakMode(
+          secondsToMinuteString(remainingTime)
+        );
         return;
       }
     };

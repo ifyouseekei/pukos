@@ -1,5 +1,6 @@
 import { PomodoroStates } from '../services/PomodoService/Pomodoro.types.js';
 import PomodoroService from '../services/PomodoService/PomodoroService.js';
+import { DocumentTitles } from '../utils/documentTitles.constants.js';
 import { getOrThrowElement } from '../utils/getOrThrowElement.js';
 
 /**
@@ -58,6 +59,7 @@ class MainControls {
   handleEndSession() {
     // IdleCheckerService.stop();
     this.pomodoroService.onReset();
+    document.title = DocumentTitles.default;
   }
 
   handleChangePomodoroState(state: PomodoroStates) {
