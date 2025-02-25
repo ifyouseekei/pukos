@@ -2,6 +2,7 @@ import { PomodoroStates } from "../services/PomodoService/Pomodoro.types.js";
 import PomodoroService from "../services/PomodoService/PomodoroService.js";
 import { DocumentTitles } from "../utils/documentTitles.constants.js";
 import { getOrThrowElement } from "../utils/getOrThrowElement.js";
+import { secondsToMinuteString } from "../utils/timeFormatter.utils.js";
 
 /**
  * This class controls the actions and events
@@ -12,6 +13,10 @@ import { getOrThrowElement } from "../utils/getOrThrowElement.js";
 class MainControlsController {
   pomodoroService: PomodoroService;
 
+  /**
+   * The text under the huge focus/break button
+   * e.g. Focus, Take an early break, etc.
+   */
   focusTextEl: HTMLSpanElement;
   focusButtonEl: HTMLButtonElement;
   endSessionButtonEl: HTMLButtonElement;
@@ -38,6 +43,9 @@ class MainControlsController {
     // init subscriptions
     this.pomodoroService.state.subscribe(
       this.handleChangePomodoroState.bind(this),
+    );
+    this.pomodoroService.remainingTime.subscribe(
+      this.updateDocumentTitle.bind(this),
     );
   }
 
@@ -86,10 +94,25 @@ class MainControlsController {
     }
   }
 
+  private updateDocumentTitle(remainingTime: number): void {
+    if (this.pomodoroService.state.getValue() === "focus") {
+      document.title = DocumentTitles.focusMode(
+        secondsToMinuteString(remainingTime),
+      );
+      return;
+    }
+
+    if (this.pomodoroService.state.getValue() === "break") {
+      document.title = DocumentTitles.breakMode(
+        secondsToMinuteString(remainingTime),
+      );
+      return;
+    }
+  }
+
   public cleanup() {
-    this.pomodoroService.state.unsubscribe(
-      this.handleChangePomodoroState.bind(this),
-    );
+    this.pomodoroService.state.unsubscribe(this.handleChangePomodoroState);
+    this.pomodoroService.remainingTime.unsubscribe(this.updateDocumentTitle);
   }
 }
 
