@@ -48,14 +48,13 @@
 }
 
 /* break mode */
+.focus-button--pre-break,
 .focus-button--break {
   background-color: var(--secondary-color);
 }
+.focus-button--pre-break:hover,
 .focus-button--break:hover,
+.focus-button--pre-break:hover .focus-button__overlay,
 .focus-button--break:hover .focus-button__overlay {
-  background-color: var(--primary-color);
-}
-
-.focus-button--pre-break {
   background-color: var(--primary-color);
 }
