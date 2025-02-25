@@ -1,5 +1,6 @@
 import { PomodoroStates } from "../services/PomodoService/Pomodoro.types.js";
 import PomodoroService from "../services/PomodoService/PomodoroService.js";
+import NotificationService from "../services/NotificationService.ts";
 import { DocumentTitles } from "../utils/documentTitles.constants.js";
 import { getOrThrowElement } from "../utils/getOrThrowElement.js";
 import { secondsToMinuteString } from "../utils/timeFormatter.utils.js";
@@ -12,6 +13,7 @@ import { secondsToMinuteString } from "../utils/timeFormatter.utils.js";
  */
 class MainControlsController {
   pomodoroService: PomodoroService;
+  notificationService: NotificationService;
 
   /**
    * The text under the huge focus/break button
@@ -27,6 +29,7 @@ class MainControlsController {
     this.focusButtonEl = getOrThrowElement("#focus-button");
     this.endSessionButtonEl = getOrThrowElement("#end-session-button");
     this.pomodoroService = PomodoroService.getInstance();
+    this.notificationService = new NotificationService();
   }
 
   init() {
@@ -55,6 +58,7 @@ class MainControlsController {
       case "break":
         // IdleCheckerService.init();
         this.pomodoroService.onFocus();
+        this.notificationService.getPermission();
         break;
       case "pre-break":
       case "focus":
