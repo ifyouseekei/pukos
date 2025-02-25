@@ -1,20 +1,20 @@
-import { Observable } from '../../utils/Observable.js';
+import { Observable } from "../../utils/Observable.js";
 
-export const LOCAL_STORAGE_KEY = 'pomodoroInterval';
-export type Intervals = '25:5' | '50:10' | '90:30';
+export const LOCAL_STORAGE_KEY = "pomodoroInterval";
+export type Intervals = "25:5" | "50:10" | "90:30";
 const INTERVALS_ENUM: Record<
   Intervals,
   { focusTime: number; breakTime: number }
 > = {
-  '25:5': {
+  "25:5": {
     focusTime: 25 * 60,
     breakTime: 5 * 60,
   },
-  '50:10': {
+  "50:10": {
     focusTime: 50 * 60,
     breakTime: 10 * 60,
   },
-  '90:30': {
+  "90:30": {
     focusTime: 90 * 60,
     breakTime: 30 * 60,
   },
@@ -28,7 +28,7 @@ export class IntervalService {
   private constructor() {
     if (IntervalService.instance) {
       throw new Error(
-        'Cannot create multiple instances of a Singleton. Use getInstance() instead.'
+        "Cannot create multiple instances of a Singleton. Use getInstance() instead.",
       );
     }
 
@@ -36,7 +36,7 @@ export class IntervalService {
     if (savedInterval && this.isIntervalValid(savedInterval)) {
       this.interval = new Observable<Intervals>(savedInterval as Intervals);
     } else {
-      this.interval = new Observable<Intervals>('25:5');
+      this.interval = new Observable<Intervals>("25:5");
     }
   }
 
@@ -69,7 +69,7 @@ export class IntervalService {
   }
 
   public isIntervalValid(value?: unknown): value is Intervals {
-    if (typeof value !== 'string') {
+    if (typeof value !== "string") {
       return false;
     }
 
