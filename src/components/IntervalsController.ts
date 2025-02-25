@@ -8,14 +8,14 @@ class IntervalsController {
   }
 
   public init() {
-    // initialize interval value on load
+    // sets the selected interval on load
     this.intervalEls.forEach((intervalEl) => {
       if (intervalEl.value === IntervalService.interval.getValue()) {
         intervalEl.checked = true;
       }
     });
 
-    // listen if user changes inverval
+    // listen to changes if the user selects a new interval
     this.intervalEls.forEach((intervalEl) => {
       intervalEl.addEventListener("change", (event) => {
         const target = event.target as HTMLInputElement;
