@@ -18,6 +18,11 @@
       Your browser does not support the audio element.
     </audio>
 
+    <!-- <audio id="backgroundMusic__brownNoise" preload="auto" loop="true"> -->
+    <!--   <source src="audio/brown-noise.mp3" type="audio/mpeg" /> -->
+    <!--   Your browser does not support the audio element. -->
+    <!-- </audio> -->
+
     <main class="container">
       <div class="wrapper">
         <section class="time-container">
@@ -89,13 +94,13 @@
 
         <section class="music-container">
           <button
-            id="play-music-button"
+            id="play-stop-music-button"
             class="heading-md text-secondary text-button"
           >
             Play Music
           </button>
-          <div>
-            <section class="radio">
+          <div class="radio-group-container">
+            <section class="radio radio--sm">
               <input
                 type="radio"
                 id="music_brown_noise"
@@ -104,14 +109,14 @@
               />
               <label for="music_brown_noise">Brown noise</label>
             </section>
-            <section class="radio">
+            <section class="radio radio--sm">
               <input
                 type="radio"
-                id="music_white_noise"
+                id="music_clock_ticking"
                 name="background_music"
-                value="white_noise"
+                value="clock_ticking"
               />
-              <label for="music_white_noise">White noise</label>
+              <label for="music_clock_ticking">Clock Ticking</label>
             </section>
           </div>
         </section>
