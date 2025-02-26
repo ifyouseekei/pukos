@@ -10,6 +10,9 @@ enum BackgroundMusicValues {
  * e.g. brown noise, white noise, etc.
  */
 class MusicService {
+  public static localStorageKeys = {
+    selectedMusicId: 'selectedMusicId',
+  };
   public isPlaying = new Observable<boolean>(false);
   public selectedMusicId = new Observable<BackgroundMusicValues>(
     BackgroundMusicValues.BrownNoise
@@ -42,7 +45,26 @@ class MusicService {
     invalidAudioFile: 'missing audio file.',
   };
 
-  constructor() {}
+  constructor() {
+    this.selectedMusicId.subscribe((musicId) => {
+      localStorage.setItem(
+        MusicService.localStorageKeys.selectedMusicId,
+        musicId
+      );
+    });
+    this.syncSelectedMusicIdFromLocalStorage();
+  }
+
+  syncSelectedMusicIdFromLocalStorage() {
+    const localStorageMusicId = localStorage.getItem(
+      MusicService.localStorageKeys.selectedMusicId
+    );
+    if (!MusicService.isValidMusicId(localStorageMusicId)) {
+      return;
+    }
+
+    this.selectedMusicId.setValue(localStorageMusicId);
+  }
 
   async play() {
     this.isPlaying.setValue(true);
