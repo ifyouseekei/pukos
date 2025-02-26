@@ -65,11 +65,10 @@ describe('scenario: saving focus time to local storage', () => {
         expect(pomodoroService.state.getValue()).toBe('focus');
 
         // Simulate a tick event from the worker
-        if (registeredEventListeners['message']) {
-          registeredEventListeners['message']({
-            data: TickWorkerJS.TICK_IDS.id,
-          });
-        }
+        expect(registeredEventListeners['message']).toEqual(expect.any(Function));
+        registeredEventListeners['message']({
+          data: TickWorkerJS.TICK_IDS.id,
+        });
 
         // Now focus time should be incremented
         expect(pomodoroService.focusTime.getValue()).toBe(1);
