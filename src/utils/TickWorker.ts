@@ -1,7 +1,7 @@
 export const TICK_IDS = {
-  start: 'start',
-  stop: 'stop',
-  id: 'tick',
+  start: "start",
+  stop: "stop",
+  id: "tick",
 };
 /**
  * TickWorker manages a web worker for ticking every second.
@@ -23,27 +23,27 @@ export class TickWorker {
   /**
    * Creates and initializes a Web Worker for time ticking.
    */
-  private createWorker() {
+  public createWorker() {
     const workerCode = () => {
       let intervalId: NodeJS.Timeout;
-      self.addEventListener('message', ({ data }) => {
+      self.addEventListener("message", ({ data }) => {
         const { action } = data;
-        if (action === 'start') {
+        if (action === "start") {
           clearInterval(intervalId);
           const oneSecondMs = 1000;
           intervalId = setInterval(() => {
-            self.postMessage('tick');
+            self.postMessage("tick");
           }, oneSecondMs);
-        } else if (action === 'stop') {
+        } else if (action === "stop") {
           clearInterval(intervalId);
         }
       });
     };
 
     let code = workerCode.toString();
-    code = code.substring(code.indexOf('{') + 1, code.lastIndexOf('}'));
+    code = code.substring(code.indexOf("{") + 1, code.lastIndexOf("}"));
 
-    const blob = new Blob([code], { type: 'application/javascript' });
+    const blob = new Blob([code], { type: "application/javascript" });
     const workerUrl = URL.createObjectURL(blob);
     this.worker = new Worker(workerUrl);
   }

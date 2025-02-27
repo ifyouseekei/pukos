@@ -18,10 +18,14 @@ class PomodoroService {
   private static instance: PomodoroService | null = null;
   private tickWorker: TickWorker;
 
+  public static localStorageKeys = {
+    focusTime: 'focusTime',
+  };
+
   public state = new Observable<PomodoroStates>('pre-focus');
   public remainingTime = new Observable<number>(IntervalService.focusTime);
-  public focusTime = new Observable<number>(0);
-  public totalTime = new Observable<number>(0);
+  public focusTime: Observable<number>;
+  public totalTime: Observable<number>;
   public isTimerRunning: boolean = false;
 
   private alarmService: AlarmService;
@@ -32,6 +36,16 @@ class PomodoroService {
         'Cannot create multiple instances of a Singleton. Use getInstance() instead.'
       );
     }
+    const storedFocusTime = localStorage.getItem(
+      PomodoroService.localStorageKeys.focusTime
+    );
+    if (storedFocusTime && !isNaN(Number(storedFocusTime))) {
+      this.focusTime = new Observable<number>(Number(storedFocusTime));
+    } else {
+      this.focusTime = new Observable<number>(0);
+    }
+
+    this.totalTime = new Observable<number>(0);
 
     this.alarmService = AlarmService.getInstance();
     this.tickWorker = new TickWorker();
@@ -39,6 +53,14 @@ class PomodoroService {
     IntervalService.interval.subscribe(this.onReset.bind(this));
     this.listenToTicks();
     this.cleanup();
+    this.focusTime.subscribe(this.storeFocusTimeToLocalStorage.bind(this));
+  }
+
+  private storeFocusTimeToLocalStorage(focusTime: number) {
+    localStorage.setItem(
+      PomodoroService.localStorageKeys.focusTime,
+      focusTime.toString()
+    );
   }
 
   /**

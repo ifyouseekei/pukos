@@ -4,7 +4,7 @@
 
 .radio label {
   cursor: pointer;
-  transition: color 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
 .radio--green {
@@ -23,4 +23,18 @@
 
 .radio:hover label {
   color: var(--primary-color) !important;
+}
+
+
+.radio--sm label {
+  color: var(--accent-color);
+}
+
+.radio--sm:hover label {
+  color: var(--primary-color);
+}
+
+/* When any label is hovered, change the color of all labels */
+.radio-group-container:hover .radio--sm label {
+  color: var(--accent-color);
 }

@@ -1,8 +1,8 @@
-import { Observable } from "../../utils/Observable.js";
+import { Observable } from '../../utils/Observable.js';
 
-enum BackgroundMusicIds {
-  BrownNoise = "backgroundMusic__brownNoise",
-  WhiteNoise = "backgroundMusic__whiteNoise",
+enum BackgroundMusicValues {
+  BrownNoise = 'brown_noise',
+  ClockTicking = 'clock_ticking',
 }
 
 /**
@@ -10,70 +10,112 @@ enum BackgroundMusicIds {
  * e.g. brown noise, white noise, etc.
  */
 class MusicService {
+  public static localStorageKeys = {
+    selectedMusicId: 'selectedMusicId',
+  };
   public isPlaying = new Observable<boolean>(false);
-  public selectedMusicId = new Observable<BackgroundMusicIds>(
-    BackgroundMusicIds.BrownNoise,
+  public selectedMusicId = new Observable<BackgroundMusicValues>(
+    BackgroundMusicValues.BrownNoise
   );
+
+  private audioContext: AudioContext | null = null;
+  private audioBuffer: AudioBuffer | null = null;
+  private sourceNode: AudioBufferSourceNode | null = null;
+  private gainNode: GainNode | null = null;
+
+  private musicFiles: Record<BackgroundMusicValues, string> = {
+    [BackgroundMusicValues.BrownNoise]: '/audio/brown-noise.mp3',
+    [BackgroundMusicValues.ClockTicking]: '/audio/clock-ticking.mp3',
+  };
+
+  async loadAudioFile(url: string) {
+    if (!this.audioContext) {
+      this.audioContext = new AudioContext();
+    }
+    console.log({ url });
+
+    const response = await fetch(url);
+    const arrayBuffer = await response.arrayBuffer();
+    this.audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+  }
 
   private static errorTexts = {
     audioFileUnsupported:
-      "Cannot play music, your browser does not support the audio element.",
-  };
-
-  // audio files can be nullable since not all browsers supported them at the moment.
-  // TODO: we prob need to make this dynamic later on, but for now, its only 2 so we do this
-  private backgroundMusics: Record<
-    BackgroundMusicIds,
-    HTMLAudioElement | null
-  > = {
-    [BackgroundMusicIds.BrownNoise]: null,
-    [BackgroundMusicIds.WhiteNoise]: null,
+      'Cannot play music, your browser does not support the audio element.',
+    invalidAudioFile: 'missing audio file.',
   };
 
   constructor() {
-    // TODO: we prob need to make this dynamic later on, but for now, its only 2 so we do this
-    this.backgroundMusics[BackgroundMusicIds.BrownNoise] =
-      document.getElementById(
-        BackgroundMusicIds.BrownNoise,
-      ) as HTMLAudioElement | null;
-
-    this.backgroundMusics[BackgroundMusicIds.WhiteNoise] =
-      document.getElementById(
-        BackgroundMusicIds.WhiteNoise,
-      ) as HTMLAudioElement | null;
+    this.selectedMusicId.subscribe((musicId) => {
+      localStorage.setItem(
+        MusicService.localStorageKeys.selectedMusicId,
+        musicId
+      );
+    });
+    this.syncSelectedMusicIdFromLocalStorage();
   }
 
-  get currentMusic(): HTMLAudioElement | null {
-    return this.backgroundMusics[this.selectedMusicId.getValue()];
+  syncSelectedMusicIdFromLocalStorage() {
+    const localStorageMusicId = localStorage.getItem(
+      MusicService.localStorageKeys.selectedMusicId
+    );
+    if (!MusicService.isValidMusicId(localStorageMusicId)) {
+      return;
+    }
+
+    this.selectedMusicId.setValue(localStorageMusicId);
   }
 
-  public play(): void {
+  async play() {
     this.isPlaying.setValue(true);
 
-    const currentMusic = this.currentMusic;
-    if (!currentMusic) {
-      alert(MusicService.errorTexts.audioFileUnsupported);
-      return;
+    if (!this.audioContext) {
+      this.audioContext = new AudioContext();
     }
 
-    currentMusic.currentTime = 0;
-    currentMusic.play();
-  }
+    if (!this.audioBuffer) {
+      await this.loadAudioFile(
+        this.musicFiles[this.selectedMusicId.getValue()]
+      );
+    }
 
-  public stop(): void {
+    this.sourceNode = this.audioContext.createBufferSource();
+    this.sourceNode.buffer = this.audioBuffer!;
+    this.sourceNode.loop = true; // Enables seamless looping
+
+    this.gainNode = this.audioContext.createGain();
+    this.sourceNode.connect(this.gainNode);
+    this.gainNode.connect(this.audioContext.destination);
+
+    this.sourceNode.loopStart = 0.1;
+    this.sourceNode.start(0.1);
+  }
+  stop() {
     this.isPlaying.setValue(false);
 
-    const currentMusic = this.currentMusic;
-    if (!currentMusic) {
-      alert(MusicService.errorTexts.audioFileUnsupported);
-      return;
+    this.audioContext = null;
+    this.audioBuffer = null;
+
+    if (this.sourceNode) {
+      this.sourceNode.stop();
+      this.sourceNode.disconnect();
+      this.sourceNode = null;
     }
-
-    currentMusic.currentTime = 0;
-    currentMusic.pause();
   }
+  // public stop(): void {
+  //   this.isPlaying.setValue(false);
+  //
+  //   const currentMusic = this.currentMusic;
+  //   if (!currentMusic) {
+  //     alert(MusicService.errorTexts.audioFileUnsupported);
+  //     return;
+  //   }
+  //
+  //   currentMusic.currentTime = 0;
+  //   currentMusic.pause();
+  // }
 
-  public onSelectMusicId(backgroundMusicId: BackgroundMusicIds): void {
+  public onSelectMusicId(backgroundMusicId: BackgroundMusicValues): void {
     // no need to process if the current is the same
     if (this.selectedMusicId.getValue() === backgroundMusicId) {
       return;
@@ -81,19 +123,29 @@ class MusicService {
 
     this.selectedMusicId.setValue(backgroundMusicId);
 
-    if (!this.isPlaying) {
+    if (!this.musicFiles[backgroundMusicId]) {
+      alert(MusicService.errorTexts.invalidAudioFile);
       return;
     }
 
-    if (!this.backgroundMusics[backgroundMusicId]) {
-      return;
-    }
+    // remove the currently playing buffer
+    this.audioBuffer = null;
 
     // stop the currently playing sound
     this.stop();
 
     // play the new selected background music
     this.play();
+  }
+
+  static isValidMusicId(musicId: unknown): musicId is BackgroundMusicValues {
+    if (typeof musicId !== 'string') {
+      return false;
+    }
+
+    return Object.values(BackgroundMusicValues).includes(
+      musicId as BackgroundMusicValues
+    );
   }
 }
 
