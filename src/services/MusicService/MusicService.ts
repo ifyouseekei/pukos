@@ -1,8 +1,8 @@
-import { Observable } from '../../utils/Observable.js';
+import { Observable } from "../../utils/Observable.js";
 
 enum BackgroundMusicValues {
-  BrownNoise = 'brown_noise',
-  ClockTicking = 'clock_ticking',
+  BrownNoise = "brown_noise",
+  ClockTicking = "clock_ticking",
 }
 
 /**
@@ -11,11 +11,11 @@ enum BackgroundMusicValues {
  */
 class MusicService {
   public static localStorageKeys = {
-    selectedMusicId: 'selectedMusicId',
+    selectedMusicId: "selectedMusicId",
   };
   public isPlaying = new Observable<boolean>(false);
   public selectedMusicId = new Observable<BackgroundMusicValues>(
-    BackgroundMusicValues.BrownNoise
+    BackgroundMusicValues.BrownNoise,
   );
 
   private audioContext: AudioContext | null = null;
@@ -24,15 +24,14 @@ class MusicService {
   private gainNode: GainNode | null = null;
 
   private musicFiles: Record<BackgroundMusicValues, string> = {
-    [BackgroundMusicValues.BrownNoise]: '/audio/brown-noise.mp3',
-    [BackgroundMusicValues.ClockTicking]: '/audio/clock-ticking.mp3',
+    [BackgroundMusicValues.BrownNoise]: "/audio/brown-noise.mp3",
+    [BackgroundMusicValues.ClockTicking]: "/audio/clock-ticking.mp3",
   };
 
   async loadAudioFile(url: string) {
     if (!this.audioContext) {
       this.audioContext = new AudioContext();
     }
-    console.log({ url });
 
     const response = await fetch(url);
     const arrayBuffer = await response.arrayBuffer();
@@ -41,15 +40,15 @@ class MusicService {
 
   private static errorTexts = {
     audioFileUnsupported:
-      'Cannot play music, your browser does not support the audio element.',
-    invalidAudioFile: 'missing audio file.',
+      "Cannot play music, your browser does not support the audio element.",
+    invalidAudioFile: "missing audio file.",
   };
 
   constructor() {
     this.selectedMusicId.subscribe((musicId) => {
       localStorage.setItem(
         MusicService.localStorageKeys.selectedMusicId,
-        musicId
+        musicId,
       );
     });
     this.syncSelectedMusicIdFromLocalStorage();
@@ -57,7 +56,7 @@ class MusicService {
 
   syncSelectedMusicIdFromLocalStorage() {
     const localStorageMusicId = localStorage.getItem(
-      MusicService.localStorageKeys.selectedMusicId
+      MusicService.localStorageKeys.selectedMusicId,
     );
     if (!MusicService.isValidMusicId(localStorageMusicId)) {
       return;
@@ -75,7 +74,7 @@ class MusicService {
 
     if (!this.audioBuffer) {
       await this.loadAudioFile(
-        this.musicFiles[this.selectedMusicId.getValue()]
+        this.musicFiles[this.selectedMusicId.getValue()],
       );
     }
 
@@ -139,12 +138,12 @@ class MusicService {
   }
 
   static isValidMusicId(musicId: unknown): musicId is BackgroundMusicValues {
-    if (typeof musicId !== 'string') {
+    if (typeof musicId !== "string") {
       return false;
     }
 
     return Object.values(BackgroundMusicValues).includes(
-      musicId as BackgroundMusicValues
+      musicId as BackgroundMusicValues,
     );
   }
 }
