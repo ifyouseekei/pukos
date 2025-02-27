@@ -26,6 +26,7 @@ class NotificationService {
     message: string;
     title: string;
   }): void {
+    this.getPermission();
     if (this.isPermitted) {
       const notification = new Notification(title, { body: message });
       notification.onclick = () => {
