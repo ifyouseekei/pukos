@@ -1,15 +1,13 @@
 class NotificationService {
-  isPermitted: boolean;
+  static isPermitted: boolean = false;
 
-  private constructor() {
-    this.isPermitted = false;
-  }
+  private constructor() {}
 
-  public getPermission() {
+  public static getPermission() {
     if (!("Notification" in window)) {
       alert("This browser does not support desktop notification");
     } else if (Notification.permission === "granted") {
-        this.isPermitted = true;
+      this.isPermitted = true;
     } else if (Notification.permission !== "denied") {
       Notification.requestPermission().then((permission) => {
         if (permission === "granted") {
@@ -19,11 +17,14 @@ class NotificationService {
     }
   }
 
-  public notify(callback: (message) => {}, title:String, message: String): void {
+  public static notify(
+    message: string,
+    callback?: (message: string) => {},
+  ): void {
     if (this.isPermitted) {
       const notification = new Notification(message);
       notification.onclick = () => {
-        callback(message);
+        callback?.(message);
       };
     }
     return;
