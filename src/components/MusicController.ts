@@ -1,5 +1,5 @@
-import MusicService from '../services/MusicService/MusicService';
-import { getOrThrowElement } from '../utils/getOrThrowElement';
+import MusicService from "../services/MusicService/MusicService";
+import { getOrThrowElement } from "../utils/getOrThrowElement";
 
 class MusicController {
   private playStopButtonEl: HTMLButtonElement;
@@ -10,17 +10,17 @@ class MusicController {
   private musicService: MusicService;
 
   public constructor(musicService: MusicService) {
-    this.playStopButtonEl = getOrThrowElement('#play-stop-music-button');
+    this.playStopButtonEl = getOrThrowElement("#play-stop-music-button");
     this.backgroundMusicListEl = document.querySelectorAll(
-      'input[name="background_music"]'
+      'input[name="background_music"]',
     );
     this.musicService = musicService;
   }
 
   public init() {
     this.playStopButtonEl.addEventListener(
-      'click',
-      this.handlePlayStopButtonClick.bind(this)
+      "click",
+      this.handlePlayStopButtonClick.bind(this),
     );
 
     // sets the selected interval on load
@@ -34,7 +34,7 @@ class MusicController {
 
     // listen to changes if the user selects a new music
     this.backgroundMusicListEl.forEach((backgroundMusicEl) => {
-      backgroundMusicEl.addEventListener('change', (event) => {
+      backgroundMusicEl.addEventListener("change", (event) => {
         const target = event.target as HTMLInputElement;
         if (!target.checked) {
           return;
@@ -61,12 +61,16 @@ class MusicController {
   }
 
   private listenToIsPlaying(isPlaying: boolean) {
-    this.setPlayStopButtonTitle(isPlaying ? 'stop' : 'play');
+    this.setPlayStopButtonTitle(isPlaying ? "stop" : "play");
   }
 
-  private setPlayStopButtonTitle(variant: 'play' | 'stop') {
+  private setPlayStopButtonTitle(variant: "play" | "stop") {
     this.playStopButtonEl.textContent =
-      variant === 'play' ? 'Play Music' : 'Stop Music';
+      variant === "play" ? "Play Music" : "Stop Music";
+  }
+
+  public cleanup() {
+    this.musicService.isPlaying.unsubscribe(this.listenToIsPlaying.bind(this));
   }
 }
 

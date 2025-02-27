@@ -1,8 +1,8 @@
-import MusicService from '../services/MusicService/MusicService.js';
-import IntervalsController from './IntervalsController.js';
-import MainControlsController from './MainControlsController.js';
-import MusicController from './MusicController.js';
-import TimerController from './TimerController.js';
+import MusicService from "../services/MusicService/MusicService.js";
+import IntervalsController from "./IntervalsController.js";
+import MainControlsController from "./MainControlsController.js";
+import MusicController from "./MusicController.js";
+import TimerController from "./TimerController.js";
 
 class HomePage {
   private static instance: HomePage | null = null;
@@ -12,8 +12,6 @@ class HomePage {
   private intervalsController: IntervalsController;
   private timerController: TimerController;
   private musicController: MusicController;
-
-  public cleanupCallbacks: Array<() => void> = [];
 
   private constructor() {
     this.mainControls = new MainControlsController();
@@ -30,8 +28,9 @@ class HomePage {
   }
 
   cleanup(): void {
-    this.cleanupCallbacks.forEach((cb) => cb());
     this.mainControls.cleanup();
+    this.timerController.cleanup();
+    this.musicController.cleanup();
   }
 
   public static getInstance(): HomePage {
@@ -43,6 +42,6 @@ class HomePage {
   }
 }
 
-window.addEventListener('unload', HomePage.getInstance().cleanup);
+window.addEventListener("unload", () => HomePage.getInstance().cleanup());
 
 export default HomePage.getInstance();
