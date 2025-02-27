@@ -13,7 +13,6 @@ import { secondsToMinuteString } from "../utils/timeFormatter.utils.js";
  */
 class MainControlsController {
   pomodoroService: PomodoroService;
-  notificationService: NotificationService;
 
   /**
    * The text under the huge focus/break button
@@ -29,7 +28,6 @@ class MainControlsController {
     this.focusButtonEl = getOrThrowElement("#focus-button");
     this.endSessionButtonEl = getOrThrowElement("#end-session-button");
     this.pomodoroService = PomodoroService.getInstance();
-    this.notificationService = new NotificationService();
   }
 
   init() {
@@ -57,11 +55,12 @@ class MainControlsController {
       case "pre-focus":
       case "break":
         // IdleCheckerService.init();
+        NotificationService.getPermission();
         this.pomodoroService.onFocus();
-        this.notificationService.getPermission();
         break;
       case "pre-break":
       case "focus":
+        NotificationService.getPermission();
         this.pomodoroService.onBreak();
         break;
       default:

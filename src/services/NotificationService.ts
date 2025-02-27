@@ -17,14 +17,19 @@ class NotificationService {
     }
   }
 
-  public static notify(
-    message: string,
-    callback?: (message: string) => {},
-  ): void {
+  public static notify({
+    callback,
+    message,
+    title,
+  }: {
+    callback?: () => void;
+    message: string;
+    title: string;
+  }): void {
     if (this.isPermitted) {
-      const notification = new Notification(message);
+      const notification = new Notification(title, { body: message });
       notification.onclick = () => {
-        callback?.(message);
+        callback?.();
       };
     }
     return;

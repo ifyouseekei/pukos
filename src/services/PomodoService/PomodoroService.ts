@@ -1,8 +1,9 @@
-import { Observable } from '../../utils/Observable.js';
-import { TICK_IDS, TickWorker } from '../../utils/TickWorker.js';
-import AlarmService from '../AlarmService/index.js';
-import IntervalService from '../IntervalService/index.js';
-import { PomodoroStates } from './Pomodoro.types.js';
+import { Observable } from "../../utils/Observable.js";
+import { TICK_IDS, TickWorker } from "../../utils/TickWorker.js";
+import AlarmService from "../AlarmService/index.js";
+import IntervalService from "../IntervalService/index.js";
+import NotificationService from "../NotificationService.js";
+import { PomodoroStates } from "./Pomodoro.types.js";
 
 /**
  * This class controls the pomodoro function of the app
@@ -19,10 +20,10 @@ class PomodoroService {
   private tickWorker: TickWorker;
 
   public static localStorageKeys = {
-    focusTime: 'focusTime',
+    focusTime: "focusTime",
   };
 
-  public state = new Observable<PomodoroStates>('pre-focus');
+  public state = new Observable<PomodoroStates>("pre-focus");
   public remainingTime = new Observable<number>(IntervalService.focusTime);
   public focusTime: Observable<number>;
   public totalTime: Observable<number>;
@@ -33,11 +34,11 @@ class PomodoroService {
   private constructor() {
     if (PomodoroService.instance) {
       throw new Error(
-        'Cannot create multiple instances of a Singleton. Use getInstance() instead.'
+        "Cannot create multiple instances of a Singleton. Use getInstance() instead.",
       );
     }
     const storedFocusTime = localStorage.getItem(
-      PomodoroService.localStorageKeys.focusTime
+      PomodoroService.localStorageKeys.focusTime,
     );
     if (storedFocusTime && !isNaN(Number(storedFocusTime))) {
       this.focusTime = new Observable<number>(Number(storedFocusTime));
@@ -59,7 +60,7 @@ class PomodoroService {
   private storeFocusTimeToLocalStorage(focusTime: number) {
     localStorage.setItem(
       PomodoroService.localStorageKeys.focusTime,
-      focusTime.toString()
+      focusTime.toString(),
     );
   }
 
@@ -72,7 +73,7 @@ class PomodoroService {
     }
     this.isTimerRunning = false;
     this.remainingTime.setValue(IntervalService.focusTime);
-    this.state.setValue('pre-focus');
+    this.state.setValue("pre-focus");
     this.tickWorker.stop();
   }
 
@@ -98,7 +99,7 @@ class PomodoroService {
     this.isTimerRunning = true;
     this.tickWorker.start();
     this.remainingTime.setValue(IntervalService.focusTime);
-    this.state.setValue('focus');
+    this.state.setValue("focus");
   }
 
   /**
@@ -109,7 +110,7 @@ class PomodoroService {
     this.isTimerRunning = true;
     this.tickWorker.start();
     this.remainingTime.setValue(IntervalService.breakTime);
-    this.state.setValue('break');
+    this.state.setValue("break");
   }
 
   public static getInstance(): PomodoroService {
@@ -131,7 +132,7 @@ class PomodoroService {
       return;
     }
 
-    worker.addEventListener('message', (event) => {
+    worker.addEventListener("message", (event) => {
       if (event.data === TICK_IDS.id && this.isTimerRunning) {
         this.countDown();
 
@@ -157,7 +158,7 @@ class PomodoroService {
 
   private countUpFocusTime(): void {
     // Only increase the focus time whilst in "focus" mode
-    if (this.state.getValue() === 'focus') {
+    if (this.state.getValue() === "focus") {
       this.focusTime.setValue(this.focusTime.getValue() + 1);
     }
   }
@@ -172,15 +173,25 @@ class PomodoroService {
     this.tickWorker.stop();
 
     // Timer ended whilst on "focus" mode
-    if (this.state.getValue() === 'focus') {
-      this.state.setValue('pre-break');
+    if (this.state.getValue() === "focus") {
+      this.state.setValue("pre-break");
+      NotificationService.notify({
+        callback: () => this.state.setValue("break"),
+        title: "Focus Session Complete",
+        message: "Click to start your break",
+      });
 
       return;
     }
 
     // Timer ended whilst on "break" mode
-    if (this.state.getValue() === 'break') {
-      this.state.setValue('pre-focus');
+    if (this.state.getValue() === "break") {
+      this.state.setValue("pre-focus");
+      NotificationService.notify({
+        callback: () => this.state.setValue("focus"),
+        title: "Break Over",
+        message: "Click to start your next focus session",
+      });
     }
   }
 
@@ -188,7 +199,7 @@ class PomodoroService {
    * Cleanup before unloading the app
    */
   private cleanup(): void {
-    window.addEventListener('beforeunload', () => {
+    window.addEventListener("beforeunload", () => {
       this.tickWorker.terminate();
       IntervalService.interval.unsubscribe(this.onReset.bind(this));
     });
