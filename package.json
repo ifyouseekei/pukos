@@ -10,7 +10,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ci": "jest --ci",
-    "prepare": "husky"
+    "prepare": "husky install"
   },
   "keywords": [
     "timer"
