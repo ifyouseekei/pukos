@@ -95,6 +95,7 @@ class PomodoroService {
    * Starts the "Focus" mode
    */
   public onFocus(): void {
+    NotificationService.close();
     this.alarmService.stopAlarm();
     this.isTimerRunning = true;
     this.tickWorker.start();
@@ -106,6 +107,7 @@ class PomodoroService {
    * Starts the "Break" mode
    */
   public onBreak(): void {
+    NotificationService.close();
     this.alarmService.stopAlarm();
     this.isTimerRunning = true;
     this.tickWorker.start();
@@ -177,7 +179,7 @@ class PomodoroService {
       this.state.setValue("pre-break");
       NotificationService.notify({
         callback: () => this.onBreak(),
-        title: "Focus Session Complete",
+        title: "Focus session complete",
         message: "Click to start your break",
       });
 
@@ -189,7 +191,7 @@ class PomodoroService {
       this.state.setValue("pre-focus");
       NotificationService.notify({
         callback: () => this.onFocus(),
-        title: "Break Over",
+        title: "Break over",
         message: "Click to start your next focus session",
       });
     }
