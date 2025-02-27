@@ -176,7 +176,7 @@ class PomodoroService {
     if (this.state.getValue() === "focus") {
       this.state.setValue("pre-break");
       NotificationService.notify({
-        callback: () => this.state.setValue("break"),
+        callback: () => this.onBreak(),
         title: "Focus Session Complete",
         message: "Click to start your break",
       });
@@ -188,7 +188,7 @@ class PomodoroService {
     if (this.state.getValue() === "break") {
       this.state.setValue("pre-focus");
       NotificationService.notify({
-        callback: () => this.state.setValue("focus"),
+        callback: () => this.onFocus(),
         title: "Break Over",
         message: "Click to start your next focus session",
       });

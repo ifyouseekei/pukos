@@ -31,6 +31,7 @@ class NotificationService {
       const notification = new Notification(title, { body: message });
       notification.onclick = () => {
         callback?.();
+        notification.close();
       };
     }
     return;
